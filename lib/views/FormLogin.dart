@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:skinoura/database/DatabaseHelper.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/models/user_model_sql.dart';
+import 'package:skinoura/views/FormRegistrasi.dart';
 
 class Formlogin extends StatefulWidget {
   const Formlogin({super.key});
@@ -34,7 +35,7 @@ class _FormloginState extends State<Formlogin> {
     if (!mounted) return;
 
     if (pengguna != null) {
-      context.pushAndRemoveAll(FormRegistrasi());
+      context.pushAndRemoveAll(LamanRegistrasi());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

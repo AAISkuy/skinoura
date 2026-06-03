@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:path/path.dart';
 import 'package:skinoura/models/user_model_sql.dart';
+import 'package:sqflite/sqflite.dart';
 
 class DBHelper {
   static final DBHelper _instance = DBHelper._internal();
