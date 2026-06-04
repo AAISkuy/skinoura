@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:skinoura/views/Form_DIscovery.dart';
+import 'package:skinoura/views/Form_Discovery.dart';
 import 'package:skinoura/views/Form_Profile.dart';
 import 'package:skinoura/views/Form_Progress.dart';
 import 'package:skinoura/views/Form_Ritual.dart';
