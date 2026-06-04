@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:skinoura/database/PreferencesHandler.dart';
+import 'package:skinoura/extension/extension.dart';
+import 'package:skinoura/views/FormLogin.dart';
+import 'package:skinoura/views/HomePage.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -11,24 +15,18 @@ class Splash_Screen extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // _checkLoginStatus();
+    _checkLoginStatus();
   }
 
-  // Future<void> _checkLoginStatus() async {
-  //   await Future.delayed(Duration(seconds: 3));
-  //   if (!mounted) return;
-  //   if (PreferencesHandler.isLogin) {
-  //     context.pushAndRemoveAll(
-  //       UserList(
-  //         // nama: PreferencesHandler.nama,
-  //         // email: PreferencesHandler.email,
-  //         // password: PreferencesHandler.password,
-  //       ),
-  //     );
-  //   } else {
-  //     context.pushAndRemoveAll(const Formlogin());
-  //   }
-  // }
+  Future<void> _checkLoginStatus() async {
+    await Future.delayed(Duration(seconds: 3));
+    if (!mounted) return;
+    if (PreferencesHandler.isLogin) {
+      context.pushAndRemoveAll(Homepage());
+    } else {
+      context.pushAndRemoveAll(const Formlogin());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

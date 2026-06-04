@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:skinoura/database/PreferencesHandler.dart';
+import 'package:skinoura/views/FormLogin.dart';
 import 'package:skinoura/views/SplashScreen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await PreferencesHandler.init();
+  await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }
 
@@ -34,7 +40,10 @@ class MyApp extends StatelessWidget {
       ),
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       initialRoute: "/",
-      routes: {'/': (context) => SplashScreen()},
+      routes: {
+        '/': (context) => SplashScreen(),
+        '/login': (context) => Formlogin(),
+      },
     );
   }
 }
