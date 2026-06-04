@@ -190,44 +190,6 @@ class _FormloginState extends State<Formlogin> {
                             onPressed: () {
                               if (_formKey.currentState!.validate()) {
                                 login();
-                                // print("Sudah memenuhi syarat");
-                                // showDialog(
-                                //   context: context,
-                                //   builder: (BuildContext context) {
-                                // return AlertDialog(
-                                //   title: Text("Berhasil"),
-                                //   content: Text("Anda berhasil login"),
-                                //   actions: [
-                                //     TextButton(
-                                //       onPressed: () async {
-                                //         await PreferencesHandler.setLogin(
-                                //           true,
-                                //         );
-                                // Navigator.pushReplacement(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (context) =>
-                                //         UserList(),
-                                //   ),
-                                // );
-                                // context.push(
-                                //   Tugashome(
-                                //     password:
-                                //         passwordcontroller.text,
-                                //     email: emailcontroller.text,
-                                //   ),
-                                // );
-                                // Navigator.pushNamed(
-                                //   context,
-                                //   "/latihnavbar",
-                                // );
-                                // },
-                                // child: Text("Lanjut"),
-                                //     ),
-                                //   ],
-                                // );
-                                // },
-                                // );
                               }
                             },
 
