@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/views/form_Home.dart';
 import 'package:skinoura/views/form_login.dart';
+import 'package:skinoura/widgets/app_bottomnav.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -22,7 +22,7 @@ class Splash_Screen extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 3));
     if (!mounted) return;
     if (PreferencesHandler.isLogin) {
-      context.pushAndRemoveAll(Homepage());
+      context.pushAndRemoveAll(AppBottomnav());
     } else {
       context.pushAndRemoveAll(const Formlogin());
     }
