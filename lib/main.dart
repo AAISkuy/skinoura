@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:skinoura/database/PreferencesHandler.dart';
+import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/views/Form_Login.dart';
-import 'package:skinoura/views/Splash_Screen.dart';
+import 'package:skinoura/views/splash_Screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         '/': (context) => SplashScreen(),
-        '/login': (context) => Formlogin(),
+        '/login': (context) => const Formlogin(),
       },
     );
   }

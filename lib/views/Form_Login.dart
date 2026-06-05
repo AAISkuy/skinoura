@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:skinoura/database/DatabaseHelper.dart';
+import 'package:skinoura/database/database_helper.dart';
+import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/models/user_model_sql.dart';
 import 'package:skinoura/views/Form_Registrasi.dart';
@@ -36,7 +37,15 @@ class _FormloginState extends State<Formlogin> {
     if (!mounted) return;
 
     if (pengguna != null) {
-      context.pushAndRemoveAll(NavigasiDrawer());
+      await PreferencesHandler.setLogin(true);
+
+      await PreferencesHandler.saveUser(
+        nama: pengguna.nama ?? "",
+        email: pengguna.email,
+        password: pengguna.password,
+      );
+
+      context.pushAndRemoveAll(AppBottomnav());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

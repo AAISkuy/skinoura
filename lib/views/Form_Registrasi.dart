@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:skinoura/database/DatabaseHelper.dart';
+import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/models/user_model_sql.dart';
-import 'package:skinoura/views/Form_Login.dart';
+import 'package:skinoura/views/form_login.dart';
 
 class LamanRegistrasi extends StatefulWidget {
   const LamanRegistrasi({super.key});
@@ -38,7 +38,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Yeay Akun anda berhasil dibuat')),
       );
-      context.push(Formlogin());
+      context.push(const Formlogin());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Akun anda sudah terdaftar")),
@@ -313,7 +313,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                   ..onTap = () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Formlogin(),
+                                      builder: (context) => const Formlogin(),
                                     ),
                                   ),
                                 text: "Log In",

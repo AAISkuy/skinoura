@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:skinoura/database/PreferencesHandler.dart';
+import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/views/Form_Login.dart';
-import 'package:skinoura/views/Home_Page.dart';
+import 'package:skinoura/views/form_Home.dart';
+import 'package:skinoura/views/form_login.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:skinoura/views/Form_Discovery.dart';
-import 'package:skinoura/views/Form_Profile.dart';
-import 'package:skinoura/views/Form_Progress.dart';
-import 'package:skinoura/views/Form_Ritual.dart';
-import 'package:skinoura/views/Home_Page.dart';
+import 'package:skinoura/views/form_discovery.dart';
+import 'package:skinoura/views/form_home.dart';
+import 'package:skinoura/views/form_profile.dart';
+import 'package:skinoura/views/form_progress.dart';
+import 'package:skinoura/views/form_ritual.dart';
 
-class NavigasiDrawer extends StatefulWidget {
-  const NavigasiDrawer({super.key});
+class AppBottomnav extends StatefulWidget {
+  const AppBottomnav({super.key});
 
   @override
-  State<NavigasiDrawer> createState() => _NavigasiDrawerState();
+  State<AppBottomnav> createState() => _AppBottomNav();
 }
 
-class _NavigasiDrawerState extends State<NavigasiDrawer> {
+class _AppBottomNav extends State<AppBottomnav> {
   int _selectedIndex = 0;
   String? selected;
 
@@ -34,51 +34,9 @@ class _NavigasiDrawerState extends State<NavigasiDrawer> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 226, 237, 243),
+
       body: _pages[_selectedIndex],
 
-      // SafeArea(
-      //   child: Column(
-      //     children: [
-      //       Padding(
-      //         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      //         child: Stack(
-      //           alignment: Alignment.center,
-      //           children: [
-      //             const Center(
-      //               child: Text(
-      //                 "Skinoura",
-      //                 style: TextStyle(
-      //                   fontSize: 24,
-      //                   fontWeight: FontWeight.bold,
-      //                   color: Color(0xFF7C9A92),
-      //                 ),
-      //               ),
-      //             ),
-      //             Align(
-      //               alignment: Alignment.centerRight,
-      //               child: InkWell(
-      //                 onTap: () {
-      //                   // Navigator.push(
-      //                   //   context,
-      //                   //   MaterialPageRoute(
-      //                   //     builder: (context) => const ProfilePage(),
-      //                   //   ),
-      //                   // );
-      //                 },
-      //                 child: CircleAvatar(
-      //                   radius: 22,
-      //                   backgroundImage: AssetImage(
-      //                     'assets/images/Exampprofil.jpeg',
-      //                   ),
-      //                 ),
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ),
-      //     ],
-      //   ),
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         backgroundColor: Colors.white,
