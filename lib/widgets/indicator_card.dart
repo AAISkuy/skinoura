@@ -28,7 +28,7 @@ class IndicatorCard extends StatelessWidget {
             value,
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Text(value, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/views/Form_Login.dart';
 import 'package:skinoura/views/form_profile.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
+import 'package:skinoura/widgets/menu_card.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -80,8 +81,6 @@ class _HomepageState extends State<Homepage> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           children: [
-            SizedBox(height: 10),
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 24),
               child: Align(
@@ -197,6 +196,93 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
+            ),
+            SizedBox(height: 20),
+
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Color(0xFF436155),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Morning Routine',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Don't forget your Vitamin C serum today for extra radiance.",
+                    style: TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+
+                  SizedBox(height: 20),
+
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: const Color(0xFF436155),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "Start Routine",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 24),
+
+            GridView.count(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 1.1,
+              children: [
+                BuildMenuCard(
+                  icon: Icons.assignment_outlined,
+                  title: "Skin Quiz",
+                  subtitle: "Update your profile",
+                  onTap: () {},
+                ),
+                BuildMenuCard(
+                  icon: Icons.auto_awesome_mosaic_outlined,
+                  title: "Recommendations",
+                  subtitle: "Curated for you",
+                  onTap: () {},
+                ),
+                BuildMenuCard(
+                  icon: Icons.calendar_today_outlined,
+                  title: "Routine Schedule",
+                  subtitle: "Manage your steps",
+                  onTap: () {},
+                ),
+                BuildMenuCard(
+                  icon: Icons.biotech_outlined,
+                  title: "Ingredient Checker",
+                  subtitle: "Analyze products",
+                  onTap: () {},
+                ),
+              ],
             ),
           ],
         ),
