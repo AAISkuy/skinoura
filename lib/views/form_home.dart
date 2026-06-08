@@ -3,6 +3,7 @@ import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/views/Form_Login.dart';
 import 'package:skinoura/views/form_profile.dart';
+import 'package:skinoura/widgets/indicator_card.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -16,7 +17,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Color(0xFFF5FAFD),
         title: Text(
           'Skinoura',
           style: TextStyle(
@@ -76,31 +77,9 @@ class _HomepageState extends State<Homepage> {
       ),
       backgroundColor: const Color(0xFFF5FAFD),
       body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  Align(
-                    // alignment: Alignment.centerLeft,
-                    // child: GestureDetector(
-                    //   onTap: () {},
-                    //   child: IconButton(
-                    //     onPressed: () async {
-                    //       await PreferencesHandler.logOut();
-                    //       if (!mounted) return;
-                    //       context.pushAndRemoveAll(const Formlogin());
-                    //     },
-                    //     icon: const Icon(Icons.exit_to_app_sharp),
-                    //   ),
-                    // ),
-                  ),
-                ],
-              ),
-            ),
-
             SizedBox(height: 10),
 
             Padding(
@@ -126,31 +105,95 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
 
-            SizedBox(height: 50),
+            SizedBox(height: 25),
 
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 24),
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Color(0xFF7C9A92),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
               ),
+
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Skin Combination Summary",
-                    style: TextStyle(color: Colors.white70),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Skin Condition\nSummary',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          height: 1.2,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFE2ECE9),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          'Update Today',
+                          style: TextStyle(
+                            color: Color(0xff436155),
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Overall hydration and barrier strength are optimal.',
+                    style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
 
-                  SizedBox(height: 8),
+                  const SizedBox(height: 20),
 
-                  Text(
-                    "Combination",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  GridView.count(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    crossAxisSpacing: 12,
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 12,
+                    childAspectRatio: 1.4,
+                    children: const [
+                      IndicatorCard(
+                        icon: Icons.opacity,
+                        value: '78%',
+                        title: 'Hydration',
+                      ),
+                      IndicatorCard(
+                        icon: Icons.shield_outlined,
+                        value: 'Good',
+                        title: 'Barrier',
+                      ),
+                      IndicatorCard(
+                        icon: Icons.opacity,
+                        value: 'Low',
+                        title: 'Sensitivity',
+                      ),
+                      IndicatorCard(
+                        icon: Icons.opacity,
+                        value: 'Balanced',
+                        title: 'Sebum',
+                      ),
+                    ],
                   ),
                 ],
               ),
