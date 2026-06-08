@@ -44,4 +44,12 @@ class PreferencesHandler {
   static Future<void> logOut() async {
     await _prefs.remove(_keyIsLogin);
   }
+
+  static Future<void> saveStepStatus(String key, bool isDone) async {
+    await _prefs.setBool(key, isDone);
+  }
+
+  static bool getStepStatus(String key) {
+    return _prefs.getBool(key) ?? false;
+  }
 }
