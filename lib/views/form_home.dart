@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/views/Form_Login.dart';
+import 'package:skinoura/views/form_profile.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -14,6 +15,65 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'Skinoura',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF7C9A92),
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          PopupMenuButton<String>(
+            position: PopupMenuPosition.under,
+            onSelected: (value) async {
+              if (value == 'Profile') {
+                print('pindah ke halaman profil');
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ProfilePage()),
+                );
+              } else if (value == 'Logout') {
+                print('Proses Logout');
+                await PreferencesHandler.logOut();
+                if (!mounted) return;
+                context.pushAndRemoveAll(const Formlogin());
+              }
+            },
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: CircleAvatar(
+                backgroundImage: AssetImage('assets/images/Exampprofil.jpeg'),
+              ),
+            ),
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'Profile',
+                child: Row(
+                  children: [
+                    Icon(Icons.person),
+                    SizedBox(width: 8),
+                    Text('Profile'),
+                  ],
+                ),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Logout',
+                child: Row(
+                  children: [
+                    Icon(Icons.logout),
+                    SizedBox(width: 8),
+                    Text('Logout'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
       backgroundColor: const Color(0xFFF5FAFD),
       body: SingleChildScrollView(
         child: Column(
@@ -23,43 +83,19 @@ class _HomepageState extends State<Homepage> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  const Center(
-                    child: Text(
-                      "Skinoura",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF7C9A92),
-                      ),
-                    ),
-                  ),
                   Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: CircleAvatar(
-                        radius: 22,
-                        backgroundImage: AssetImage(
-                          'assets/images/Exampprofil.jpeg',
-                        ),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () {},
-                      child: IconButton(
-                        onPressed: () async {
-                          await PreferencesHandler.logOut();
-
-                          if (!mounted) return;
-
-                          context.pushAndRemoveAll(const Formlogin());
-                        },
-                        icon: const Icon(Icons.exit_to_app_sharp),
-                      ),
-                    ),
+                    // alignment: Alignment.centerLeft,
+                    // child: GestureDetector(
+                    //   onTap: () {},
+                    //   child: IconButton(
+                    //     onPressed: () async {
+                    //       await PreferencesHandler.logOut();
+                    //       if (!mounted) return;
+                    //       context.pushAndRemoveAll(const Formlogin());
+                    //     },
+                    //     icon: const Icon(Icons.exit_to_app_sharp),
+                    //   ),
+                    // ),
                   ),
                 ],
               ),
