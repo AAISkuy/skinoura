@@ -41,6 +41,24 @@ class _RitualPageState extends State<RitualPage> {
     },
   ];
 
+  final List<Map<String, String>> _nightSteps = [
+    {
+      "id": "step1",
+      "title": "Gentle Cleanser",
+      "subtitle": "Hydrating Oat Wash",
+    },
+    {
+      "id": "step2",
+      "title": "Vitamin C Serum",
+      "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
+    },
+    {
+      "id": "step3",
+      "title": "Lightweight Moisturizer",
+      "subtitle": "Ceramide Complex",
+    },
+  ];
+
   Map<String, bool> _stepStatuses = {};
 
   @override

@@ -1,13 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/views/Form_Login.dart';
 import 'package:skinoura/views/form_profile.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
 import 'package:skinoura/widgets/menu_card.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  // final VoidCallback? onStartRoutineTap;
+  // final VoidCallback? onSkinQuizTap;
+  // final VoidCallback? onRecommendationTap;
+  // final VoidCallback? onRoutineScheduleTap;
+  // final VoidCallback? onIngredientCheckerTap;
+  const Homepage({
+    super.key,
+    // this.onStartRoutineTap,
+    // this.onIngredientCheckerTap,
+    // this.onRecommendationTap,
+    // this.onRoutineScheduleTap,
+    // this.onSkinQuizTap,
+  });
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -227,6 +239,15 @@ class _HomepageState extends State<Homepage> {
 
                   ElevatedButton(
                     onPressed: () {},
+                    // onPressed: () async {
+                    //   await PreferencesHandler.saveStepStatus(
+                    //     'morning_routine_started',
+                    //     true,
+                    //   );
+                    //   if (widget.onStartRoutineTap != null) {
+                    //     widget.onStartRoutineTap!();
+                    //   }
+                    // },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF436155),

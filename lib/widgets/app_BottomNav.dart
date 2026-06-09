@@ -18,11 +18,39 @@ class _AppBottomNav extends State<AppBottomnav> {
 
   final List<Widget> _pages = [
     const Homepage(),
-    const DiscoveryPage(),
+    const DiscoverPage(),
     const RitualPage(),
     const ProgressPage(),
     const ProfilePage(),
   ];
+
+  // List<Widget> get _pages => [
+  //   Homepage(
+  //     onStartRoutineTap: () => _onBottomNavTapped(2),
+  //     onSkinQuizTap: () => _onBottomNavTapped(4),
+  //     onRecommendationTap: () => _onBottomNavTapped(1),
+  //     onRoutineScheduleTap: () => _onBottomNavTapped(3),
+  //   ),
+
+  // Navigator(
+  //   onGenerateRoute: (settings) {
+  //     return MaterialPageRoute(
+  //       builder: (context) => Homepage(
+  //         onStartRoutineTap: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => const QuizPage()),
+  //           );
+  //         },
+  //       ),
+  //     );
+  //   },
+  // ),
+  //   const DiscoveryPage(),
+  //   const RitualPage(),
+  //   const ProgressPage(),
+  //   const ProfilePage(),
+  // ];
 
   void _onBottomNavTapped(int index) {
     setState(() {

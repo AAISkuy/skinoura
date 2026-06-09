@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/views/form_login.dart';
 import 'package:skinoura/widgets/app_bottomnav.dart';
 
 class SplashScreen extends StatefulWidget {

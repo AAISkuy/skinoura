@@ -1,47 +1,56 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:skinoura/auth/Form_Registrasi.dart';
 import 'package:skinoura/database/database_helper.dart';
+import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/models/user_model_sql.dart';
-import 'package:skinoura/views/form_login.dart';
+import 'package:skinoura/widgets/app_BottomNav.dart';
 
-class LamanRegistrasi extends StatefulWidget {
-  const LamanRegistrasi({super.key});
+class Formlogin extends StatefulWidget {
+  const Formlogin({super.key});
 
   @override
-  State<LamanRegistrasi> createState() => Laman_RegistrasiState();
+  State<Formlogin> createState() => _FormloginState();
 }
 
-class Laman_RegistrasiState extends State<LamanRegistrasi> {
+class _FormloginState extends State<Formlogin> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController namacontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
-  void register() async {
-    final nama = namacontroller.text.trim();
+  void login() async {
     final email = emailcontroller.text.trim();
     final pass = passwordcontroller.text.trim();
 
-    if (nama.isEmpty || email.isEmpty || pass.isEmpty) {
+    if (email.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Mohon mengisi semua form')));
+      ).showSnackBar(const SnackBar(content: Text('Harap mengisi semua form')));
       return;
     }
 
-    final user = UserModelSql(nama: nama, email: email, password: pass);
-    bool succes = await DBHelper().registerUser(user);
+    final pengguna = await DBHelper().loginUser(
+      UserModelSql(email: email, password: pass),
+    );
 
     if (!mounted) return;
 
-    if (succes) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Yeay Akun anda berhasil dibuat')),
+    if (pengguna != null) {
+      await PreferencesHandler.setLogin(true);
+
+      await PreferencesHandler.saveUser(
+        nama: pengguna.nama ?? "",
+        email: pengguna.email,
+        password: pengguna.password,
       );
-      context.push(const Formlogin());
+
+      context.pushAndRemoveAll(AppBottomnav());
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Akun anda sudah terdaftar")),
+        const SnackBar(
+          content: Text("Login gagal. Email atau Password salah."),
+        ),
       );
     }
   }
@@ -49,36 +58,35 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.all(35),
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Color(0xFFF6F1EE), Color.fromARGB(255, 214, 236, 238)],
-          ),
-        ),
-
-        child: Center(
-          child: Container(
-            width: 400,
-            height: 700,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(35),
+      body: Form(
+        key: _formKey,
+        child: Container(
+          padding: const EdgeInsets.all(35),
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFF6F1EE), Color.fromARGB(255, 214, 236, 238)],
             ),
+          ),
 
-            child: Form(
-              key: _formKey,
+          child: Center(
+            child: Container(
+              width: 320,
+              height: 650,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(35),
+              ),
+
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 10,
                 children: [
                   Container(
-                    height: 35,
-                    width: 35,
+                    height: 70,
+                    width: 70,
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -91,75 +99,32 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                   ),
 
                   Text(
-                    "Create Account",
+                    "Skinoura",
                     style: TextStyle(
-                      fontSize: 18,
+                      fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: Color(0xFF7C9A92),
                     ),
+                  ),
+
+                  Text(
+                    "Your skincare journey begins here.",
+                    style: TextStyle(fontSize: 14, color: Color(0xFF7C9A92)),
                   ),
 
                   SizedBox(height: 10),
 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
+                    spacing: 5,
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Masukkan Nama Anda",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7C9A92),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                        child: TextFormField(
-                          controller: namacontroller,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.person),
-                            hintText: "Nama Anda",
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFF7C9A92)),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFF7C9A92)),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Nama tidak boleh kosong";
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
-
-                      SizedBox(height: 10),
-
-                      Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Masukkan Email Anda",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7C9A92),
-                          ),
-                        ),
-                      ),
                       Container(
                         margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: TextFormField(
                           controller: emailcontroller,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.email),
-                            hintText: "example@gmail.com",
+                            hintText: "Masukkan Email Anda",
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xFF7C9A92)),
                               borderRadius: BorderRadius.circular(12),
@@ -180,26 +145,14 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                         ),
                       ),
 
-                      SizedBox(height: 10),
-
-                      Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Masukkan Password Anda",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7C9A92),
-                          ),
-                        ),
-                      ),
                       Container(
                         margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
                         child: TextFormField(
                           controller: passwordcontroller,
+                          obscureText: true,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.lock),
-                            hintText: "Password Anda",
+                            prefixIcon: Icon(Icons.key),
+                            hintText: "Masukkan Password Anda",
                             focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(color: Color(0xFF7C9A92)),
                               borderRadius: BorderRadius.circular(12),
@@ -209,12 +162,11 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          obscureText: true,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Password tidak boleh kosong";
                             } else if (value.length < 6) {
-                              return "Password harus terdiri dari minimal 6 karakter";
+                              return "Password Anda Terlalu Singkat";
                             }
                             return null;
                           },
@@ -223,45 +175,48 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
 
                       SizedBox(height: 10),
 
-                      Padding(
-                        padding: EdgeInsets.only(left: 20),
-                        child: Text(
-                          "Konfirmasi Password Anda",
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: Color(0xFF7C9A92),
-                          ),
+                      Container(
+                        margin: EdgeInsets.only(right: 22),
+
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                print("Forgot Password Clicked");
+                              },
+                              child: Text("Forgot Password?"),
+                            ),
+                          ],
                         ),
                       ),
+
                       Container(
                         margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.lock),
-                            hintText: "Konfirmasi Password",
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFF7C9A92)),
-                              borderRadius: BorderRadius.circular(12),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                login();
+                              }
+                            },
+
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Color(0xFF7C9A92),
                             ),
-                            border: OutlineInputBorder(
-                              borderSide: BorderSide(color: Color(0xFF7C9A92)),
-                              borderRadius: BorderRadius.circular(12),
+
+                            child: Text(
+                              "Sign In",
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
-                          obscureText: true,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return "Password tidak boleh kosong";
-                            } else if (value != passwordcontroller.text) {
-                              return "Password tidak sama";
-                            }
-                            return null;
-                          },
                         ),
                       ),
 
                       SizedBox(height: 10),
+                      Center(child: Text("OR")),
 
                       Container(
                         margin: EdgeInsets.fromLTRB(20, 10, 20, 0),
@@ -276,10 +231,12 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: Text("Berhasil"),
-                                      content: Text("Anda berhasil Mendaftar"),
+                                      content: Text("Anda berhasil login"),
                                       actions: [
                                         TextButton(
-                                          onPressed: register,
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
                                           child: Text("Lanjut"),
                                         ),
                                       ],
@@ -293,30 +250,37 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               backgroundColor: Color(0xFF7C9A92),
                             ),
 
-                            child: Text(
-                              "Sign Up",
-                              style: TextStyle(color: Colors.white),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/google.png",
+                                  width: 20,
+                                ),
+                                Text(
+                                  "   Continue with Google",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
 
-                      SizedBox(height: 20),
-
                       Center(
                         child: Text.rich(
                           TextSpan(
-                            text: "Already have an Account? ",
+                            text: "New to CareSkin+? ",
                             children: [
                               TextSpan(
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () => Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const Formlogin(),
+                                      builder: (context) => LamanRegistrasi(),
                                     ),
                                   ),
-                                text: "Log In",
+                                text: "Create an account",
                                 style: TextStyle(
                                   color: Color(0xFF7C9A92),
                                   decoration: TextDecoration.underline,
