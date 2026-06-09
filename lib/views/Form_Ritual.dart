@@ -195,7 +195,7 @@ class _RitualPageState extends State<RitualPage> {
     String tanggalDiformat = "${DateFormat('EEEE, MMMM d').format(hariIni)}th";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF5FAFD),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),

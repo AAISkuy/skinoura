@@ -50,7 +50,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Skinoura")),
+      backgroundColor: const Color(0xFFF5FAFD),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
