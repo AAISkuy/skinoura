@@ -51,7 +51,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   SizedBox(height: 10),
 
                   Text(
-                    'Skin Type: ',
+                    'Skin Type: ${PreferencesHandler.skinType}',
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
 

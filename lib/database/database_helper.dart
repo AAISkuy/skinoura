@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:path/path.dart';
+import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/models/user_model_sql.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -33,6 +34,16 @@ class DBHelper {
           nama TEXT,
           email TEXT UNIQUE,
           password TEXT
+        )
+      ''');
+
+        await db.execute('''
+        CREATE TABLE rituals(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          subtitle TEXT,
+          isDone INTEGER DEFAULT 0,
+          ownerEmail TEXT 
         )
       ''');
       },
@@ -91,5 +102,58 @@ class DBHelper {
     } catch (e) {
       return false;
     }
+  }
+
+  //crud ritual
+  Future<int> insertRitual(RitualModel ritual) async {
+    final db = await database;
+
+    return await db.insert('rituals', ritual.toMap());
+  }
+
+  Future<List<RitualModel>> getRitualsByEmail(String email) async {
+    final db = await database;
+
+    final results = await db.query(
+      'rituals',
+      where: 'ownerEmail = ?',
+      whereArgs: [email],
+    );
+
+    return results.map((e) => RitualModel.fromMap(e)).toList();
+  }
+
+  Future<bool> updateRitualStatus(int id, bool isDone) async {
+    final db = await database;
+
+    int count = await db.update(
+      'rituals',
+      {'isDone': isDone ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    return count > 0;
+  }
+
+  Future<bool> updateRitual(RitualModel ritual) async {
+    final db = await database;
+
+    int count = await db.update(
+      'rituals',
+      ritual.toMap(),
+      where: 'id = ?',
+      whereArgs: [ritual.id],
+    );
+
+    return count > 0;
+  }
+
+  Future<bool> deleteRitual(int id) async {
+    final db = await database;
+
+    int count = await db.delete('rituals', where: 'id = ?', whereArgs: [id]);
+
+    return count > 0;
   }
 }

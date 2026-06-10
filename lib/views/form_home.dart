@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skinoura/database/preferences_handler.dart';
+import 'package:skinoura/views/form_quiz.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
 import 'package:skinoura/widgets/menu_card.dart';
 
@@ -221,24 +222,20 @@ class _HomepageState extends State<Homepage> {
                   icon: Icons.assignment_outlined,
                   title: "Skin Quiz",
                   subtitle: "Update your profile",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const QuizPage()),
+                    ).then((_) {
+                      setState(() {});
+                    });
+                  },
                 ),
-                BuildMenuCard(
-                  icon: Icons.auto_awesome_mosaic_outlined,
-                  title: "Recommendations",
-                  subtitle: "Curated for you",
-                  onTap: () {},
-                ),
+
                 BuildMenuCard(
                   icon: Icons.calendar_today_outlined,
                   title: "Routine Schedule",
                   subtitle: "Manage your steps",
-                  onTap: () {},
-                ),
-                BuildMenuCard(
-                  icon: Icons.biotech_outlined,
-                  title: "Ingredient Checker",
-                  subtitle: "Analyze products",
                   onTap: () {},
                 ),
               ],

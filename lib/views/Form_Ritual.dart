@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
-import 'package:skinoura/widgets/bar_card.dart';
+import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/widgets/calendar_card.dart';
 import 'package:skinoura/widgets/ritual_card.dart';
 
@@ -13,58 +14,51 @@ class RitualPage extends StatefulWidget {
 }
 
 class _RitualPageState extends State<RitualPage> {
+
+  List<RitualModel> rituals = [];
+
   // 1. KONTROLLER UNTUK MENANGKAP INPUTAN TEXT
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subtitleController = TextEditingController();
 
   // 2. LIST DATA YANG SEKARANG BISA DITAMBAH (GA PAKE FINAL)
-  final List<Map<String, String>> _morningSteps = [
-    {
-      "id": "step1",
-      "title": "Gentle Cleanser",
-      "subtitle": "Hydrating Oat Wash",
-    },
-    {
-      "id": "step2",
-      "title": "Vitamin C Serum",
-      "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
-    },
-    {
-      "id": "step3",
-      "title": "Lightweight Moisturizer",
-      "subtitle": "Ceramide Complex",
-    },
-    {
-      "id": "step4",
-      "title": "Mineral SPF 50",
-      "subtitle": "Zinc Oxide formulation • Don't skip!",
-    },
-  ];
+  // final List<Map<String, String>> _morningSteps = [
+  //   {
+  //     "id": "step1",
+  //     "title": "Gentle Cleanser",
+  //     "subtitle": "Hydrating Oat Wash",
+  //   },
+  //   {
+  //     "id": "step2",
+  //     "title": "Vitamin C Serum",
+  //     "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
+  //   },
+  //   {
+  //     "id": "step3",
+  //     "title": "Lightweight Moisturizer",
+  //     "subtitle": "Ceramide Complex",
+  //   },
+  //   {
+  //     "id": "step4",
+  //     "title": "Mineral SPF 50",
+  //     "subtitle": "Zinc Oxide formulation • Don't skip!",
+  //   },
+  // ];
 
-  final List<Map<String, String>> _nightSteps = [
-    {
-      "id": "step1",
-      "title": "Gentle Cleanser",
-      "subtitle": "Hydrating Oat Wash",
-    },
-    {
-      "id": "step2",
-      "title": "Vitamin C Serum",
-      "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
-    },
-    {
-      "id": "step3",
-      "title": "Lightweight Moisturizer",
-      "subtitle": "Ceramide Complex",
-    },
-  ];
+    Future<void> loadRituals() async {
+    final data = await DBHelper().getRitualsByEmail(
+      PreferencesHandler.email,
+    );
 
-  Map<String, bool> _stepStatuses = {};
-
+    setState(() {
+      rituals = data;
+    });
+  }
+  
   @override
   void initState() {
     super.initState();
-    _loadSavedRitualData();
+    loadRituals();
   }
 
   @override
@@ -75,17 +69,6 @@ class _RitualPageState extends State<RitualPage> {
     super.dispose();
   }
 
-  Future<void> _loadSavedRitualData() async {
-    Map<String, bool> tempStatuses = {};
-    for (var step in _morningSteps) {
-      String id = step["id"]!;
-      bool status = PreferencesHandler.getStepStatus(id);
-      tempStatuses[id] = status;
-    }
-    setState(() {
-      _stepStatuses = tempStatuses;
-    });
-  }
 
   // ===========================================================================
   // 3. FUNGSI POP-UP UNTUK TAMBAH SKINCARE LANGSUNG DARI TAMPILAN
@@ -138,22 +121,31 @@ class _RitualPageState extends State<RitualPage> {
             ElevatedButton(
               onPressed: () async {
                 if (_titleController.text.isNotEmpty) {
-                  // Bikin ID unik berdasarkan timestamp waktu saat ini
-                  String uniqueId =
-                      "step_${DateTime.now().millisecondsSinceEpoch}";
 
-                  setState(() {
-                    // Masukkan data baru hasil ketikan user ke dalam List
-                    _morningSteps.add({
-                      "id": uniqueId,
-                      "title": _titleController.text,
-                      "subtitle": _subtitleController.text.isEmpty
-                          ? "Custom Product"
-                          : _subtitleController.text,
-                    });
-                    _stepStatuses[uniqueId] =
-                        false; // Set status awal belum dicentang
-                  });
+                  onPressed: () async {
+  if (_titleController.text.isNotEmpty) {
+
+    await DBHelper().insertRitual(
+      RitualModel(
+        title: _titleController.text,
+        subtitle: _subtitleController.text.isEmpty
+            ? "Custom Product"
+            : _subtitleController.text,
+        isDone: false,
+        ownerEmail: PreferencesHandler.email,
+      ),
+    );
+
+    _titleController.clear();
+    _subtitleController.clear();
+
+    await loadRituals();
+
+    if (context.mounted) {
+      Navigator.pop(context);
+    }
+  }
+},
 
                   // Bersihkan form inputan
                   _titleController.clear();
@@ -276,7 +268,7 @@ class _RitualPageState extends State<RitualPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${_morningSteps.length} steps • ~5 mins",
+                                  "${rituals.length} steps • ~5 mins",
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -303,93 +295,103 @@ class _RitualPageState extends State<RitualPage> {
 
                     // LOOPING LIST DATA SKINCARE
                     Column(
-                      children: _morningSteps.map((step) {
-                        String id = step["id"]!;
-                        bool isDone = _stepStatuses[id] ?? false;
-                        int nomorUrut = _morningSteps.indexOf(step) + 1;
+                      children: rituals.map((ritual) {
+  int nomorUrut = rituals.indexOf(ritual) + 1;
 
-                        return RitualStepCard(
-                          title: step["title"]!,
-                          subtitle: step["subtitle"]!,
-                          stepNumber: "Step $nomorUrut",
-                          isDone: isDone,
-                          onTap: () async {
-                            setState(() {
-                              _stepStatuses[id] = !isDone;
-                            });
-                            await PreferencesHandler.saveStepStatus(
-                              id,
-                              !isDone,
-                            );
-                          },
-                        );
-                      }).toList(),
+  return GestureDetector(
+    onLongPress: () async {
+
+      await DBHelper().deleteRitual(
+        ritual.id!,
+      );
+
+      await loadRituals();
+    },
+
+    child: RitualStepCard(
+      title: ritual.title,
+      subtitle: ritual.subtitle,
+      stepNumber: "Step $nomorUrut",
+      isDone: ritual.isDone,
+
+      onTap: () async {
+
+        await DBHelper().updateRitualStatus(
+          ritual.id!,
+          !ritual.isDone,
+        );
+
+        await loadRituals();
+      },
+    ),
+  );
+}).toList(),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 24),
 
-              // D. CONSISTENCY TRACKER SECTION
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          "Consistency",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFF436155),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Text(
-                            "${persenHariIni.toInt()}%",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "You're on a 3-day streak. Keep building that barrier!",
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-                    const SizedBox(height: 20),
+              // // D. CONSISTENCY TRACKER SECTION
+              // Container(
+              //   padding: const EdgeInsets.all(20),
+              //   decoration: BoxDecoration(
+              //     color: Colors.white,
+              //     borderRadius: BorderRadius.circular(24),
+              //   ),
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           const Text(
+              //             "Consistency",
+              //             style: TextStyle(
+              //               fontSize: 18,
+              //               fontWeight: FontWeight.bold,
+              //             ),
+              //           ),
+              //           Container(
+              //             padding: const EdgeInsets.all(6),
+              //             decoration: const BoxDecoration(
+              //               color: Color(0xFF436155),
+              //               shape: BoxShape.circle,
+              //             ),
+              //             child: Text(
+              //               "${persenHariIni.toInt()}%",
+              //               style: const TextStyle(
+              //                 color: Colors.white,
+              //                 fontSize: 11,
+              //                 fontWeight: FontWeight.bold,
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       const SizedBox(height: 8),
+              //       const Text(
+              //         "You're on a 3-day streak. Keep building that barrier!",
+              //         style: TextStyle(color: Colors.grey, fontSize: 14),
+              //       ),
+              //       const SizedBox(height: 20),
 
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        const BarChartCard(day: "S", percentage: 100),
-                        const BarChartCard(day: "M", percentage: 100),
-                        const BarChartCard(day: "T", percentage: 100),
-                        BarChartCard(day: "W", percentage: persenHariIni),
-                        const BarChartCard(day: "T", percentage: 0),
-                        const BarChartCard(day: "F", percentage: 0),
-                        const BarChartCard(day: "S", percentage: 0),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+              //       Row(
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         crossAxisAlignment: CrossAxisAlignment.end,
+              //         children: [
+              //           const BarChartCard(day: "S", percentage: 100),
+              //           const BarChartCard(day: "M", percentage: 100),
+              //           const BarChartCard(day: "T", percentage: 100),
+              //           BarChartCard(day: "W", percentage: persenHariIni),
+              //           const BarChartCard(day: "T", percentage: 0),
+              //           const BarChartCard(day: "F", percentage: 0),
+              //           const BarChartCard(day: "S", percentage: 0),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
             ],
           ),
         ),
