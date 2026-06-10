@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
+import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/widgets/bar_card.dart';
 import 'package:skinoura/widgets/calendar_card.dart';
 import 'package:skinoura/widgets/ritual_card.dart';
@@ -13,58 +15,47 @@ class RitualPage extends StatefulWidget {
 }
 
 class _RitualPageState extends State<RitualPage> {
+  List<RitualModel> rituals = [];
   // 1. KONTROLLER UNTUK MENANGKAP INPUTAN TEXT
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subtitleController = TextEditingController();
 
   // 2. LIST DATA YANG SEKARANG BISA DITAMBAH (GA PAKE FINAL)
-  final List<Map<String, String>> _morningSteps = [
-    {
-      "id": "step1",
-      "title": "Gentle Cleanser",
-      "subtitle": "Hydrating Oat Wash",
-    },
-    {
-      "id": "step2",
-      "title": "Vitamin C Serum",
-      "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
-    },
-    {
-      "id": "step3",
-      "title": "Lightweight Moisturizer",
-      "subtitle": "Ceramide Complex",
-    },
-    {
-      "id": "step4",
-      "title": "Mineral SPF 50",
-      "subtitle": "Zinc Oxide formulation • Don't skip!",
-    },
-  ];
-
-  final List<Map<String, String>> _nightSteps = [
-    {
-      "id": "step1",
-      "title": "Gentle Cleanser",
-      "subtitle": "Hydrating Oat Wash",
-    },
-    {
-      "id": "step2",
-      "title": "Vitamin C Serum",
-      "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
-    },
-    {
-      "id": "step3",
-      "title": "Lightweight Moisturizer",
-      "subtitle": "Ceramide Complex",
-    },
-  ];
-
-  Map<String, bool> _stepStatuses = {};
+  // final List<Map<String, String>> _morningSteps = [
+  //   {
+  //     "id": "step1",
+  //     "title": "Gentle Cleanser",
+  //     "subtitle": "Hydrating Oat Wash",
+  //   },
+  //   {
+  //     "id": "step2",
+  //     "title": "Vitamin C Serum",
+  //     "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
+  //   },
+  //   {
+  //     "id": "step3",
+  //     "title": "Lightweight Moisturizer",
+  //     "subtitle": "Ceramide Complex",
+  //   },
+  //   {
+  //     "id": "step4",
+  //     "title": "Mineral SPF 50",
+  //     "subtitle": "Zinc Oxide formulation • Don't skip!",
+  //   },
+  // ];
 
   @override
   void initState() {
     super.initState();
-    _loadSavedRitualData();
+    loadRituals();
+  }
+
+  Future<void> loadRituals() async {
+    final data = await DBHelper().getRitualsByEmail(PreferencesHandler.email);
+
+    setState(() {
+      rituals = data;
+    });
   }
 
   @override
@@ -73,18 +64,6 @@ class _RitualPageState extends State<RitualPage> {
     _titleController.dispose();
     _subtitleController.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadSavedRitualData() async {
-    Map<String, bool> tempStatuses = {};
-    for (var step in _morningSteps) {
-      String id = step["id"]!;
-      bool status = PreferencesHandler.getStepStatus(id);
-      tempStatuses[id] = status;
-    }
-    setState(() {
-      _stepStatuses = tempStatuses;
-    });
   }
 
   // ===========================================================================
@@ -138,27 +117,25 @@ class _RitualPageState extends State<RitualPage> {
             ElevatedButton(
               onPressed: () async {
                 if (_titleController.text.isNotEmpty) {
-                  // Bikin ID unik berdasarkan timestamp waktu saat ini
-                  String uniqueId =
-                      "step_${DateTime.now().millisecondsSinceEpoch}";
-
-                  setState(() {
-                    // Masukkan data baru hasil ketikan user ke dalam List
-                    _morningSteps.add({
-                      "id": uniqueId,
-                      "title": _titleController.text,
-                      "subtitle": _subtitleController.text.isEmpty
+                  await DBHelper().insertRitual(
+                    RitualModel(
+                      title: _titleController.text,
+                      subtitle: _subtitleController.text.isEmpty
                           ? "Custom Product"
                           : _subtitleController.text,
-                    });
-                    _stepStatuses[uniqueId] =
-                        false; // Set status awal belum dicentang
-                  });
+                      isDone: false,
+                      ownerEmail: PreferencesHandler.email,
+                    ),
+                  );
 
-                  // Bersihkan form inputan
                   _titleController.clear();
                   _subtitleController.clear();
-                  Navigator.pop(context); // Tutup Pop-up
+
+                  await loadRituals();
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -179,17 +156,11 @@ class _RitualPageState extends State<RitualPage> {
   @override
   Widget build(BuildContext context) {
     // LOGIKA HITUNG PERSENTASE DINAMIS (.length)
-    int jumlahDicentang = 0;
-    for (var step in _morningSteps) {
-      String id = step["id"]!;
-      if (_stepStatuses[id] == true) {
-        jumlahDicentang++;
-      }
-    }
+    int jumlahDicentang = rituals.where((e) => e.isDone).length;
 
-    double persenHariIni = _morningSteps.isEmpty
+    double persenHariIni = rituals.isEmpty
         ? 0.0
-        : (jumlahDicentang / _morningSteps.length) * 100;
+        : (jumlahDicentang / rituals.length) * 100;
 
     DateTime hariIni = DateTime.now();
     String tanggalDiformat = "${DateFormat('EEEE, MMMM d').format(hariIni)}th";
@@ -276,7 +247,7 @@ class _RitualPageState extends State<RitualPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${_morningSteps.length} steps • ~5 mins",
+                                  "${rituals.length} steps • ~5 mins",
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
@@ -303,25 +274,31 @@ class _RitualPageState extends State<RitualPage> {
 
                     // LOOPING LIST DATA SKINCARE
                     Column(
-                      children: _morningSteps.map((step) {
-                        String id = step["id"]!;
-                        bool isDone = _stepStatuses[id] ?? false;
-                        int nomorUrut = _morningSteps.indexOf(step) + 1;
+                      children: rituals.map((ritual) {
+                        int nomorUrut = rituals.indexOf(ritual) + 1;
 
-                        return RitualStepCard(
-                          title: step["title"]!,
-                          subtitle: step["subtitle"]!,
-                          stepNumber: "Step $nomorUrut",
-                          isDone: isDone,
-                          onTap: () async {
-                            setState(() {
-                              _stepStatuses[id] = !isDone;
-                            });
-                            await PreferencesHandler.saveStepStatus(
-                              id,
-                              !isDone,
-                            );
+                        return GestureDetector(
+                          onLongPress: () async {
+                            await DBHelper().deleteRitual(ritual.id!);
+
+                            await loadRituals();
                           },
+
+                          child: RitualStepCard(
+                            title: ritual.title,
+                            subtitle: ritual.subtitle,
+                            stepNumber: "Step $nomorUrut",
+                            isDone: ritual.isDone,
+
+                            onTap: () async {
+                              await DBHelper().updateRitualStatus(
+                                ritual.id!,
+                                !ritual.isDone,
+                              );
+
+                              await loadRituals();
+                            },
+                          ),
                         );
                       }).toList(),
                     ),
