@@ -32,4 +32,8 @@ class RitualModel {
       ownerEmail: map['ownerEmail'],
     );
   }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db

@@ -5,7 +5,6 @@ import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/views/form_discovery.dart';
 import 'package:skinoura/views/form_home.dart';
 import 'package:skinoura/views/form_profile.dart';
-import 'package:skinoura/views/form_progress.dart';
 import 'package:skinoura/views/form_ritual.dart';
 
 class AppBottomnav extends StatefulWidget {
@@ -23,8 +22,6 @@ class _AppBottomNav extends State<AppBottomnav> {
     const Homepage(),
     const DiscoverPage(),
     const RitualPage(),
-    const ProgressPage(),
-    const ProfilePage(),
   ];
 
   // List<Widget> get _pages => [
@@ -67,7 +64,7 @@ class _AppBottomNav extends State<AppBottomnav> {
       appBar: AppBar(
         backgroundColor: Color(0xFFF5FAFD),
         title: Text(
-          'Skinoura',
+          'Careskin+',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -141,11 +138,6 @@ class _AppBottomNav extends State<AppBottomnav> {
             icon: Icon(Icons.calendar_today_outlined),
             label: 'Ritual',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.show_chart),
-            label: 'Progress',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
