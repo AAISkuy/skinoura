@@ -117,6 +117,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       horizontal: 8,
                       vertical: 4,
                     ),
+                    leading: Text('data'),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     leading: CircleAvatar(
                       backgroundColor: const Color(0xFFF5F5F5),
                       radius: 22,
