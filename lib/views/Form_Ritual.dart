@@ -41,6 +41,60 @@ class _RitualPageState extends State<RitualPage> {
     super.dispose();
   }
 
+  void _showEditDialog(RitualModel ritual) {
+    final titleController = TextEditingController(text: ritual.title);
+    final subtitleController = TextEditingController(text: ritual.subtitle);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Edit Skincare"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: titleController,
+                decoration: const InputDecoration(labelText: "Nama Produk"),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: subtitleController,
+                decoration: const InputDecoration(labelText: "Kandungan"),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Batal"),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await DBHelper().updateRitual(
+                  RitualModel(
+                    id: ritual.id,
+                    title: titleController.text,
+                    subtitle: subtitleController.text,
+                    isDone: ritual.isDone,
+                    ownerEmail: ritual.ownerEmail,
+                  ),
+                );
+
+                await loadRituals();
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text("Simpan"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   //  fungsi buat nambah  skincare
   void _showAddSkincareDialog() {
     showDialog(
@@ -128,9 +182,6 @@ class _RitualPageState extends State<RitualPage> {
 
   @override
   Widget build(BuildContext context) {
-    //     // LOGIKA HITUNG PERSENTASE DINAMIS (.length)
-    //     int jumlahDicentang = rituals.where((e) => e.isDone).length;
-
     // double persenHariIni = rituals.isEmpty
     //     ? 0.0
     //     : (jumlahDicentang / rituals.length) * 100;
@@ -248,7 +299,6 @@ class _RitualPageState extends State<RitualPage> {
                         return GestureDetector(
                           onLongPress: () async {
                             await DBHelper().deleteRitual(ritual.id!);
-
                             await loadRituals();
                           },
 
@@ -263,7 +313,6 @@ class _RitualPageState extends State<RitualPage> {
                                 ritual.id!,
                                 !ritual.isDone,
                               );
-
                               await loadRituals();
                             },
 
@@ -272,7 +321,9 @@ class _RitualPageState extends State<RitualPage> {
                               await loadRituals();
                             },
 
-                            onEdit: () {},
+                            onEdit: () {
+                              _showEditDialog(ritual);
+                            },
                           ),
                         );
                       }).toList(),

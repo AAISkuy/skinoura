@@ -88,7 +88,7 @@ class RitualStepCard extends StatelessWidget {
                     ),
                   ),
 
-                  // Nomor Step (Kanan - Contoh: Step 1, Step 2)
+                  // Nomor Step (Bagian kanan )
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
