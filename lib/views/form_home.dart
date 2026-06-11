@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/views/form_quiz.dart';
+import 'package:skinoura/views/form_ritual.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
 import 'package:skinoura/widgets/menu_card.dart';
 
@@ -47,7 +48,7 @@ class _HomepageState extends State<Homepage> {
                       ),
                     ),
                     Text(
-                      'Your skin is looks great today.',
+                      'Your skin looks great today.',
                       style: TextStyle(color: Colors.blueGrey),
                     ),
                   ],
@@ -177,16 +178,16 @@ class _HomepageState extends State<Homepage> {
                   SizedBox(height: 20),
 
                   ElevatedButton(
-                    onPressed: () {},
-                    // onPressed: () async {
-                    //   await PreferencesHandler.saveStepStatus(
-                    //     'morning_routine_started',
-                    //     true,
-                    //   );
-                    //   if (widget.onStartRoutineTap != null) {
-                    //     widget.onStartRoutineTap!();
-                    //   }
-                    // },
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RitualPage(),
+                        ),
+                      ).then((_) {
+                        setState(() {});
+                      });
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: const Color(0xFF436155),
@@ -216,7 +217,7 @@ class _HomepageState extends State<Homepage> {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 1.1,
+              childAspectRatio: 1,
               children: [
                 BuildMenuCard(
                   icon: Icons.assignment_outlined,
@@ -236,7 +237,16 @@ class _HomepageState extends State<Homepage> {
                   icon: Icons.calendar_today_outlined,
                   title: "Routine Schedule",
                   subtitle: "Manage your steps",
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RitualPage(),
+                      ),
+                    ).then((_) {
+                      setState(() {});
+                    });
+                  },
                 ),
               ],
             ),

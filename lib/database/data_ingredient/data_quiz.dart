@@ -6,7 +6,8 @@ final List<Question> skinQuizQuestions = [
         "Bagaimana kondisi wajahmu di siang hari beberapa jam setelah cuci muka?",
     options: [
       AnswerOption(
-        optionText: "Mengkilap, sangat berminyak di seluruh area wajah.",
+        optionText:
+            "Terlihat mengkilap dan terasa berminyak di seluruh area wajah.",
         skinType: "Oily",
         recommendedIngredients: [
           "Salicylic Acid (BHA)",
@@ -28,7 +29,7 @@ final List<Question> skinQuizQuestions = [
       ),
       AnswerOption(
         optionText:
-            "Berminyak parah di dahi, hidung, dan dagu (T-Zone), tapi pipi terasa kering atau biasa aja.",
+            "Sangat berminyak di dahi, hidung, dan dagu (T-Zone), pada bagian pipi terasa kering atau biasa aja.",
         skinType: "Combination",
         recommendedIngredients: [
           "Niacinamide",
@@ -62,7 +63,7 @@ final List<Question> skinQuizQuestions = [
       ),
       AnswerOption(
         optionText:
-            "Kadang agak gatal atau merah, tapi cepat hilang dalam hitungan jam.",
+            "Kadang gatal atau merah, tapi cepat hilang dalam hitungan jam.",
         skinType: "Combination",
         recommendedIngredients: ["Allantoin", "Niacinamide"],
       ),
@@ -116,7 +117,7 @@ final List<Question> skinQuizQuestions = [
     options: [
       AnswerOption(
         optionText:
-            "Terasa licin karena minyak, lengket, dan teksturnya tidak merata akibat bruntusan/jerawat.",
+            "Terasa licin karena minyak, lengket, dan teksturnya tidak merata akibat beruntusan/jerawat.",
         skinType: "Oily",
         recommendedIngredients: [
           "Salicylic Acid (BHA)",

@@ -46,13 +46,9 @@ class _QuizPageState extends State<QuizPage> {
         .key;
 
     List<String> listIngredients = collectedIngredients.toList();
+
     await PreferencesHandler.saveSkinType(tipeKulitFinal);
-
     await PreferencesHandler.saveRecommendedIngredients(listIngredients);
-
-    // --- DI SINI PROSES SIMPAN KE PREFERENCES ---
-    // PreferencesHandler.namaSkintype = tipeKulitFinal;
-    // PreferencesHandler.saveIngredients(jsonEncode(listIngredients));
 
     // Tampilin dialog berhasil sebelum balik ke halaman utama/profile
     showDialog(
@@ -61,7 +57,7 @@ class _QuizPageState extends State<QuizPage> {
       builder: (context) => AlertDialog(
         title: const Text("Quiz Selesai!"),
         content: Text(
-          "Tipe kulitmu adalah $tipeKulitFinal.\nBahan yang cocok: ${listIngredients.join(', ')}",
+          "Tipe kulitmu adalah $tipeKulitFinal.\nBahan yang direkomendasi untuk tipe kulit anda akan tampil di discovery",
         ),
         actions: [
           TextButton(

@@ -195,7 +195,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         const SizedBox(height: 20),
 
                         Text(
-                          "Comedogenicity (${selectedIngredient!.comedogenicity}/5)",
+                          "Menyebabkan Komedo (${selectedIngredient!.comedogenicity}/5)",
                         ),
 
                         const SizedBox(height: 8),
@@ -207,7 +207,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         const SizedBox(height: 20),
 
                         Text(
-                          "Irritation Risk (${selectedIngredient!.irritationRisk}/5)",
+                          "Menyebabkan Iritasi (${selectedIngredient!.irritationRisk}/5)",
                         ),
 
                         const SizedBox(height: 8),
