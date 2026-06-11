@@ -22,7 +22,6 @@ class _AppBottomNav extends State<AppBottomnav> {
     const Homepage(),
     const DiscoverPage(),
     const RitualPage(),
-    const ProfilePage(),
   ];
 
   // List<Widget> get _pages => [
@@ -139,7 +138,6 @@ class _AppBottomNav extends State<AppBottomnav> {
             icon: Icon(Icons.calendar_today_outlined),
             label: 'Ritual',
           ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
