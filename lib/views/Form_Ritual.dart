@@ -14,47 +14,19 @@ class RitualPage extends StatefulWidget {
 }
 
 class _RitualPageState extends State<RitualPage> {
-
   List<RitualModel> rituals = [];
 
-  // 1. KONTROLLER UNTUK MENANGKAP INPUTAN TEXT
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subtitleController = TextEditingController();
 
-  // 2. LIST DATA YANG SEKARANG BISA DITAMBAH (GA PAKE FINAL)
-  // final List<Map<String, String>> _morningSteps = [
-  //   {
-  //     "id": "step1",
-  //     "title": "Gentle Cleanser",
-  //     "subtitle": "Hydrating Oat Wash",
-  //   },
-  //   {
-  //     "id": "step2",
-  //     "title": "Vitamin C Serum",
-  //     "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
-  //   },
-  //   {
-  //     "id": "step3",
-  //     "title": "Lightweight Moisturizer",
-  //     "subtitle": "Ceramide Complex",
-  //   },
-  //   {
-  //     "id": "step4",
-  //     "title": "Mineral SPF 50",
-  //     "subtitle": "Zinc Oxide formulation • Don't skip!",
-  //   },
-  // ];
-
-    Future<void> loadRituals() async {
-    final data = await DBHelper().getRitualsByEmail(
-      PreferencesHandler.email,
-    );
+  Future<void> loadRituals() async {
+    final data = await DBHelper().getRitualsByEmail(PreferencesHandler.email);
 
     setState(() {
       rituals = data;
     });
   }
-  
+
   @override
   void initState() {
     super.initState();
@@ -63,16 +35,13 @@ class _RitualPageState extends State<RitualPage> {
 
   @override
   void dispose() {
-    // Bersihin controller pas halaman ditutup biar ga kebocoran memori
+    // Bersihin controller pas halaman ditutup
     _titleController.dispose();
     _subtitleController.dispose();
     super.dispose();
   }
 
-
-  // ===========================================================================
-  // 3. FUNGSI POP-UP UNTUK TAMBAH SKINCARE LANGSUNG DARI TAMPILAN
-  // ===========================================================================
+  //  fungsi buat nambah  skincare
   void _showAddSkincareDialog() {
     showDialog(
       context: context,
@@ -114,43 +83,32 @@ class _RitualPageState extends State<RitualPage> {
               onPressed: () {
                 _titleController.clear();
                 _subtitleController.clear();
-                Navigator.pop(context); // Tutup Pop-up
+                Navigator.pop(context);
               },
               child: const Text("Batal", style: TextStyle(color: Colors.grey)),
             ),
             ElevatedButton(
               onPressed: () async {
                 if (_titleController.text.isNotEmpty) {
+                  await DBHelper().insertRitual(
+                    RitualModel(
+                      title: _titleController.text,
+                      subtitle: _subtitleController.text.isEmpty
+                          ? "Custom Product"
+                          : _subtitleController.text,
+                      isDone: false,
+                      ownerEmail: PreferencesHandler.email,
+                    ),
+                  );
 
-                  onPressed: () async {
-  if (_titleController.text.isNotEmpty) {
-
-    await DBHelper().insertRitual(
-      RitualModel(
-        title: _titleController.text,
-        subtitle: _subtitleController.text.isEmpty
-            ? "Custom Product"
-            : _subtitleController.text,
-        isDone: false,
-        ownerEmail: PreferencesHandler.email,
-      ),
-    );
-
-    _titleController.clear();
-    _subtitleController.clear();
-
-    await loadRituals();
-
-    if (context.mounted) {
-      Navigator.pop(context);
-    }
-  }
-},
-
-                  // Bersihkan form inputan
                   _titleController.clear();
                   _subtitleController.clear();
-                  Navigator.pop(context); // Tutup Pop-up
+
+                  await loadRituals();
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -170,18 +128,12 @@ class _RitualPageState extends State<RitualPage> {
 
   @override
   Widget build(BuildContext context) {
-    // LOGIKA HITUNG PERSENTASE DINAMIS (.length)
-    int jumlahDicentang = 0;
-    for (var step in _morningSteps) {
-      String id = step["id"]!;
-      if (_stepStatuses[id] == true) {
-        jumlahDicentang++;
-      }
-    }
+    //     // LOGIKA HITUNG PERSENTASE DINAMIS (.length)
+    //     int jumlahDicentang = rituals.where((e) => e.isDone).length;
 
-    double persenHariIni = _morningSteps.isEmpty
-        ? 0.0
-        : (jumlahDicentang / _morningSteps.length) * 100;
+    // double persenHariIni = rituals.isEmpty
+    //     ? 0.0
+    //     : (jumlahDicentang / rituals.length) * 100;
 
     DateTime hariIni = DateTime.now();
     String tanggalDiformat = "${DateFormat('EEEE, MMMM d').format(hariIni)}th";
@@ -194,11 +146,10 @@ class _RitualPageState extends State<RitualPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // A. HEADER SECTION
               const Text(
                 "Today's Ritual",
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -210,7 +161,7 @@ class _RitualPageState extends State<RitualPage> {
               ),
               const SizedBox(height: 20),
 
-              // B. CALENDAR TIMELINE
+              // buat header kalender tanggal
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(5, (index) {
@@ -237,7 +188,6 @@ class _RitualPageState extends State<RitualPage> {
               ),
               const SizedBox(height: 28),
 
-              // C. MORNING PROTOCOL CARD (DENGAN TOMBOL TAMBAH "+")
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -261,7 +211,7 @@ class _RitualPageState extends State<RitualPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  "Morning Protocol",
+                                  "Skincare Protocol",
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -279,53 +229,53 @@ class _RitualPageState extends State<RitualPage> {
                           ],
                         ),
 
-                        // 🟢 DI SINI TOMBOL TAMBAHNYA, BANG!
                         IconButton(
                           icon: const Icon(
                             Icons.add_circle,
                             color: Color(0xFF436155),
                             size: 28,
                           ),
-                          onPressed:
-                              _showAddSkincareDialog, // Pas diklik panggil pop-up dialog
+                          onPressed: _showAddSkincareDialog,
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
 
-                    // LOOPING LIST DATA SKINCARE
                     Column(
                       children: rituals.map((ritual) {
-  int nomorUrut = rituals.indexOf(ritual) + 1;
+                        int nomorUrut = rituals.indexOf(ritual) + 1;
 
-  return GestureDetector(
-    onLongPress: () async {
+                        return GestureDetector(
+                          onLongPress: () async {
+                            await DBHelper().deleteRitual(ritual.id!);
 
-      await DBHelper().deleteRitual(
-        ritual.id!,
-      );
+                            await loadRituals();
+                          },
 
-      await loadRituals();
-    },
+                          child: RitualStepCard(
+                            title: ritual.title,
+                            subtitle: ritual.subtitle,
+                            stepNumber: "Step $nomorUrut",
+                            isDone: ritual.isDone,
 
-    child: RitualStepCard(
-      title: ritual.title,
-      subtitle: ritual.subtitle,
-      stepNumber: "Step $nomorUrut",
-      isDone: ritual.isDone,
+                            onTap: () async {
+                              await DBHelper().updateRitualStatus(
+                                ritual.id!,
+                                !ritual.isDone,
+                              );
 
-      onTap: () async {
+                              await loadRituals();
+                            },
 
-        await DBHelper().updateRitualStatus(
-          ritual.id!,
-          !ritual.isDone,
-        );
+                            onDelete: () async {
+                              await DBHelper().deleteRitual(ritual.id!);
+                              await loadRituals();
+                            },
 
-        await loadRituals();
-      },
-    ),
-  );
-}).toList(),
+                            onEdit: () {},
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),

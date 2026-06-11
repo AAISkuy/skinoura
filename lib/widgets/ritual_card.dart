@@ -6,6 +6,8 @@ class RitualStepCard extends StatelessWidget {
   final String stepNumber;
   final bool isDone;
   final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
   const RitualStepCard({
     super.key,
@@ -14,13 +16,14 @@ class RitualStepCard extends StatelessWidget {
     required this.stepNumber,
     required this.isDone,
     required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
-      // 1. Dekorasi utama ditaruh di paling luar (warna dasar putih dan shadow halus)
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -32,7 +35,7 @@ class RitualStepCard extends StatelessWidget {
           ),
         ],
       ),
-      // 2. ClipRRect + AntiAlias biar efek klik InkWell kepotong rapi di pojokan melengkung
+      // ClipRRect + AntiAlias biar efek klik InkWell kepotong rapi di pojokan melengkung
       child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
         clipBehavior: Clip.antiAlias,
@@ -86,13 +89,49 @@ class RitualStepCard extends StatelessWidget {
                   ),
 
                   // Nomor Step (Kanan - Contoh: Step 1, Step 2)
-                  Text(
-                    stepNumber,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey.withOpacity(0.8),
-                      fontWeight: FontWeight.w500,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        stepNumber,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.withOpacity(0.8),
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      PopupMenuButton<String>(
+                        onSelected: (value) {
+                          if (value == 'edit') {
+                            onEdit();
+                          } else if (value == 'delete') {
+                            onDelete();
+                          }
+                        },
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(
+                            value: 'edit',
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit_outlined),
+                                SizedBox(width: 8),
+                                Text('Edit'),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete_outline),
+                                SizedBox(width: 8),
+                                Text('Delete'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),

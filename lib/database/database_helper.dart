@@ -26,7 +26,7 @@ class DBHelper {
 
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE users(
