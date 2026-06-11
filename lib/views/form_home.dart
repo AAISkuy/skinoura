@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/views/form_quiz.dart';
-import 'package:skinoura/views/form_ritual.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
-import 'package:skinoura/widgets/menu_card.dart';
 
 class Homepage extends StatefulWidget {
   // final VoidCallback? onStartRoutineTap;
@@ -41,14 +39,14 @@ class _HomepageState extends State<Homepage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Hello, ${PreferencesHandler.nama}.',
+                      'Halo, ${PreferencesHandler.nama}.',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      'Your skin looks great today.',
+                      'Kulit kamu terlihat sehat hari ini.',
                       style: TextStyle(color: Colors.blueGrey),
                     ),
                   ],
@@ -56,7 +54,7 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
 
-            SizedBox(height: 25),
+            SizedBox(height: 15),
 
             Container(
               padding: const EdgeInsets.all(20),
@@ -98,7 +96,7 @@ class _HomepageState extends State<Homepage> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Text(
-                          'Update Today',
+                          'Update Terbaru',
                           style: TextStyle(
                             color: Color(0xff436155),
                             fontSize: 12,
@@ -162,7 +160,7 @@ class _HomepageState extends State<Homepage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Morning Routine',
+                    'Skin Quiz',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
@@ -171,7 +169,7 @@ class _HomepageState extends State<Homepage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    "Don't forget your Vitamin C serum today for extra radiance.",
+                    "Ayo cari tahu jenis kulit kamu",
                     style: TextStyle(color: Colors.white, fontSize: 14),
                   ),
 
@@ -182,7 +180,7 @@ class _HomepageState extends State<Homepage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const RitualPage(),
+                          builder: (context) => const QuizPage(),
                         ),
                       ).then((_) {
                         setState(() {});
@@ -201,7 +199,7 @@ class _HomepageState extends State<Homepage> {
                       elevation: 0,
                     ),
                     child: const Text(
-                      "Start Routine",
+                      "Start Quiz",
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -210,46 +208,6 @@ class _HomepageState extends State<Homepage> {
             ),
 
             SizedBox(height: 24),
-
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1,
-              children: [
-                BuildMenuCard(
-                  icon: Icons.assignment_outlined,
-                  title: "Skin Quiz",
-                  subtitle: "Update your profile",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const QuizPage()),
-                    ).then((_) {
-                      setState(() {});
-                    });
-                  },
-                ),
-
-                BuildMenuCard(
-                  icon: Icons.calendar_today_outlined,
-                  title: "Routine Schedule",
-                  subtitle: "Manage your steps",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RitualPage(),
-                      ),
-                    ).then((_) {
-                      setState(() {});
-                    });
-                  },
-                ),
-              ],
-            ),
           ],
         ),
       ),

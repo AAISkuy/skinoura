@@ -297,11 +297,6 @@ class _RitualPageState extends State<RitualPage> {
                         int nomorUrut = rituals.indexOf(ritual) + 1;
 
                         return GestureDetector(
-                          onLongPress: () async {
-                            await DBHelper().deleteRitual(ritual.id!);
-                            await loadRituals();
-                          },
-
                           child: RitualStepCard(
                             title: ritual.title,
                             subtitle: ritual.subtitle,
@@ -332,67 +327,6 @@ class _RitualPageState extends State<RitualPage> {
                 ),
               ),
               const SizedBox(height: 24),
-
-              // // D. CONSISTENCY TRACKER SECTION
-              // Container(
-              //   padding: const EdgeInsets.all(20),
-              //   decoration: BoxDecoration(
-              //     color: Colors.white,
-              //     borderRadius: BorderRadius.circular(24),
-              //   ),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         children: [
-              //           const Text(
-              //             "Consistency",
-              //             style: TextStyle(
-              //               fontSize: 18,
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //           Container(
-              //             padding: const EdgeInsets.all(6),
-              //             decoration: const BoxDecoration(
-              //               color: Color(0xFF436155),
-              //               shape: BoxShape.circle,
-              //             ),
-              //             child: Text(
-              //               "${persenHariIni.toInt()}%",
-              //               style: const TextStyle(
-              //                 color: Colors.white,
-              //                 fontSize: 11,
-              //                 fontWeight: FontWeight.bold,
-              //               ),
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //       const SizedBox(height: 8),
-              //       const Text(
-              //         "You're on a 3-day streak. Keep building that barrier!",
-              //         style: TextStyle(color: Colors.grey, fontSize: 14),
-              //       ),
-              //       const SizedBox(height: 20),
-
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //         crossAxisAlignment: CrossAxisAlignment.end,
-              //         children: [
-              //           const BarChartCard(day: "S", percentage: 100),
-              //           const BarChartCard(day: "M", percentage: 100),
-              //           const BarChartCard(day: "T", percentage: 100),
-              //           BarChartCard(day: "W", percentage: persenHariIni),
-              //           const BarChartCard(day: "T", percentage: 0),
-              //           const BarChartCard(day: "F", percentage: 0),
-              //           const BarChartCard(day: "S", percentage: 0),
-              //         ],
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),

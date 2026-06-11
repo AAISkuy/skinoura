@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
+import 'package:skinoura/extension/extension.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -87,7 +89,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Align(
               alignment: AlignmentGeometry.centerLeft,
               child: Text(
-                'My Saved Routine',
+                'App Setting',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
@@ -105,6 +107,66 @@ class _ProfilePageState extends State<ProfilePage> {
                     offset: const Offset(0, 5),
                   ),
                 ],
+              ),
+
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    leading: CircleAvatar(
+                      backgroundColor: const Color(0xFFF5F5F5),
+                      radius: 22,
+                      child: Icon(
+                        Icons.settings_outlined,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    title: const Text(
+                      "Preferences",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "Theme, Language, Units",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.blueGrey,
+                    ),
+                    onTap: () {},
+                  ),
+                ],
+              ),
+            ),
+
+            SizedBox(height: 35),
+
+            SizedBox(
+              height: 35,
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () async {
+                  await PreferencesHandler.logOut();
+                  if (!mounted) return;
+                  context.pushAndRemoveAll(const Formlogin());
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 241, 241, 241),
+                  foregroundColor: const Color(0xFF436155),
+                  elevation: 1,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: Text('Logout'),
               ),
             ),
           ],

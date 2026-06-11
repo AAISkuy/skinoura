@@ -64,7 +64,7 @@ class _AppBottomNav extends State<AppBottomnav> {
       appBar: AppBar(
         backgroundColor: Color(0xFFF5FAFD),
         title: Text(
-          'Skinoura',
+          'Careskin+',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
