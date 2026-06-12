@@ -43,7 +43,11 @@ class DBHelper {
           title TEXT,
           subtitle TEXT,
           isDone INTEGER DEFAULT 0,
+<<<<<<< HEAD
+          ownerEmail TEXT
+=======
           ownerEmail TEXT 
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
         )
       ''');
       },

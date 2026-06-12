@@ -3,6 +3,10 @@ import 'package:intl/intl.dart';
 import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/ritual_model.dart';
+<<<<<<< HEAD
+import 'package:skinoura/widgets/bar_card.dart';
+=======
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
 import 'package:skinoura/widgets/calendar_card.dart';
 import 'package:skinoura/widgets/ritual_card.dart';
 
@@ -15,6 +19,35 @@ class RitualPage extends StatefulWidget {
 
 class _RitualPageState extends State<RitualPage> {
   List<RitualModel> rituals = [];
+<<<<<<< HEAD
+  // 1. KONTROLLER UNTUK MENANGKAP INPUTAN TEXT
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _subtitleController = TextEditingController();
+
+  // 2. LIST DATA YANG SEKARANG BISA DITAMBAH (GA PAKE FINAL)
+  // final List<Map<String, String>> _morningSteps = [
+  //   {
+  //     "id": "step1",
+  //     "title": "Gentle Cleanser",
+  //     "subtitle": "Hydrating Oat Wash",
+  //   },
+  //   {
+  //     "id": "step2",
+  //     "title": "Vitamin C Serum",
+  //     "subtitle": "15% L-Ascorbic Acid • Apply 3-4 drops",
+  //   },
+  //   {
+  //     "id": "step3",
+  //     "title": "Lightweight Moisturizer",
+  //     "subtitle": "Ceramide Complex",
+  //   },
+  //   {
+  //     "id": "step4",
+  //     "title": "Mineral SPF 50",
+  //     "subtitle": "Zinc Oxide formulation • Don't skip!",
+  //   },
+  // ];
+=======
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subtitleController = TextEditingController();
@@ -26,11 +59,23 @@ class _RitualPageState extends State<RitualPage> {
       rituals = data;
     });
   }
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
 
   @override
   void initState() {
     super.initState();
     loadRituals();
+<<<<<<< HEAD
+  }
+
+  Future<void> loadRituals() async {
+    final data = await DBHelper().getRitualsByEmail(PreferencesHandler.email);
+
+    setState(() {
+      rituals = data;
+    });
+=======
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
   }
 
   @override
@@ -41,6 +86,11 @@ class _RitualPageState extends State<RitualPage> {
     super.dispose();
   }
 
+<<<<<<< HEAD
+  // ===========================================================================
+  // 3. FUNGSI POP-UP UNTUK TAMBAH SKINCARE LANGSUNG DARI TAMPILAN
+  // ===========================================================================
+=======
   void _showEditDialog(RitualModel ritual) {
     final titleController = TextEditingController(text: ritual.title);
     final subtitleController = TextEditingController(text: ritual.subtitle);
@@ -96,6 +146,7 @@ class _RitualPageState extends State<RitualPage> {
   }
 
   //  fungsi buat nambah  skincare
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
   void _showAddSkincareDialog() {
     showDialog(
       context: context,
@@ -182,9 +233,18 @@ class _RitualPageState extends State<RitualPage> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
+    // LOGIKA HITUNG PERSENTASE DINAMIS (.length)
+    int jumlahDicentang = rituals.where((e) => e.isDone).length;
+
+    double persenHariIni = rituals.isEmpty
+        ? 0.0
+        : (jumlahDicentang / rituals.length) * 100;
+=======
     // double persenHariIni = rituals.isEmpty
     //     ? 0.0
     //     : (jumlahDicentang / rituals.length) * 100;
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
 
     DateTime hariIni = DateTime.now();
     String tanggalDiformat = "${DateFormat('EEEE, MMMM d').format(hariIni)}th";
@@ -297,6 +357,15 @@ class _RitualPageState extends State<RitualPage> {
                         int nomorUrut = rituals.indexOf(ritual) + 1;
 
                         return GestureDetector(
+<<<<<<< HEAD
+                          onLongPress: () async {
+                            await DBHelper().deleteRitual(ritual.id!);
+
+                            await loadRituals();
+                          },
+
+=======
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
                           child: RitualStepCard(
                             title: ritual.title,
                             subtitle: ritual.subtitle,
@@ -308,6 +377,11 @@ class _RitualPageState extends State<RitualPage> {
                                 ritual.id!,
                                 !ritual.isDone,
                               );
+<<<<<<< HEAD
+
+                              await loadRituals();
+                            },
+=======
                               await loadRituals();
                             },
 
@@ -319,6 +393,7 @@ class _RitualPageState extends State<RitualPage> {
                             onEdit: () {
                               _showEditDialog(ritual);
                             },
+>>>>>>> 5dbd063a1eeaa9e47ff4989c4e42a2eed4fcb6db
                           ),
                         );
                       }).toList(),
