@@ -78,7 +78,7 @@ class _HomepageState extends State<Homepage> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Text(
-                        'Skin Condition\nSummary',
+                        'Rangkuman \nkondisi kulit',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -108,7 +108,7 @@ class _HomepageState extends State<Homepage> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Overall hydration and barrier strength are optimal.',
+                    'Secara keseluruhan, kekuatan skin barrier anda baik.',
                     style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
 

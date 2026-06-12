@@ -136,7 +136,7 @@ class _AppBottomNav extends State<AppBottomnav> {
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Discover'),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today_outlined),
-            label: 'Ritual',
+            label: 'Routine',
           ),
         ],
       ),

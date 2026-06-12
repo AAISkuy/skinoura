@@ -76,7 +76,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        "Recommended For You",
+                        "Disarankan untuk anda",
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -86,7 +86,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                       const SizedBox(height: 6),
 
                       Text(
-                        "Based on your ${PreferencesHandler.skinType} skin type",
+                        "Berdasarkan kulit anda yang bertipe ${PreferencesHandler.skinType}",
                         style: const TextStyle(color: Colors.grey),
                       ),
 
@@ -129,7 +129,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                     child: TextField(
                       controller: searchController,
                       decoration: const InputDecoration(
-                        hintText: "Search Ingredient",
+                        hintText: "Cari formula",
                       ),
                     ),
                   ),
@@ -138,7 +138,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
                   ElevatedButton(
                     onPressed: analyzeIngredient,
-                    child: const Text("Analyze"),
+                    child: const Text("Analisa"),
                   ),
                 ],
               ),
