@@ -138,7 +138,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
                   ElevatedButton(
                     onPressed: analyzeIngredient,
-                    child: const Text("Analisa"),
+                    child: const Text("Analyze"),
                   ),
                 ],
               ),

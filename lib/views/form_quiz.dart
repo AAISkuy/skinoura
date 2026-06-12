@@ -11,15 +11,15 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  // 1. Data Pertanyaan Dummy
+  // Data Pertanyaan Dummy
   final List<Question> _questions = skinQuizQuestions;
 
-  // 2. State Management internal Quiz
+  // State Management internal Quiz
   int _currentIndex = 0; // Menandakan pertanyaan ke-berapa yang aktif
   final List<AnswerOption> _selectedAnswers =
       []; // Menyimpan semua jawaban pilihan user
 
-  // 3. Fungsi Logika Hitung Hasil & Simpan
+  // Fungsi Logika Hitung Hasil & Simpan
   Future<void> _hitungHasilQuiz() async {
     Map<String, int> scoreSkinType = {
       "Oily": 0,
@@ -72,7 +72,7 @@ class _QuizPageState extends State<QuizPage> {
     );
   }
 
-  // 4. Fungsi ketika opsi jawaban diklik
+  // Fungsi ketika opsi jawaban diklik
   void _nextQuestion(AnswerOption option) {
     _selectedAnswers.add(option);
 
@@ -88,7 +88,7 @@ class _QuizPageState extends State<QuizPage> {
   @override
   Widget build(BuildContext context) {
     final currentQuestion = _questions[_currentIndex];
-    // Menghitung persentase progress untuk LinearProgressIndicator (0.0 sampai 1.0)
+    // Menghitung persentase progress untuk LinearProgressIndicator
     double progressPercent = (_currentIndex + 1) / _questions.length;
 
     return Scaffold(
@@ -110,7 +110,7 @@ class _QuizPageState extends State<QuizPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- PROGRESS BAR & INDIKATOR ANGKA ---
+            // PROGRESS BAR dan INDIKATOR ANGKA
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -156,7 +156,7 @@ class _QuizPageState extends State<QuizPage> {
             ),
             const SizedBox(height: 30),
 
-            // --- DAFTAR PILIHAN JAWABAN (Dinamis memakai Map) ---
+            // --- DAFTAR PILIHAN JAWABAN (Map) ---
             Expanded(
               child: ListView(
                 children: currentQuestion.options.map((option) {

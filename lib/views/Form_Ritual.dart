@@ -269,7 +269,7 @@ class _RitualPageState extends State<RitualPage> {
                                   ),
                                 ),
                                 Text(
-                                  "${rituals.length} steps • ~5 mins",
+                                  "${rituals.length} steps ",
                                   style: const TextStyle(
                                     fontSize: 12,
                                     color: Colors.grey,
