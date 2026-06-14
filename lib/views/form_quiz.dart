@@ -22,10 +22,10 @@ class _QuizPageState extends State<QuizPage> {
   // Fungsi Logika Hitung Hasil & Simpan
   Future<void> _hitungHasilQuiz() async {
     Map<String, int> scoreSkinType = {
-      "Oily": 0,
-      "Dry": 0,
-      "Combination": 0,
-      "Sensitive": 0,
+      "Berminyak": 0,
+      "Kering": 0,
+      "Kombinasi": 0,
+      "Sensitif": 0,
     };
 
     Set<String> collectedIngredients = {};
@@ -34,8 +34,8 @@ class _QuizPageState extends State<QuizPage> {
       if (scoreSkinType.containsKey(jawaban.skinType)) {
         scoreSkinType[jawaban.skinType] = scoreSkinType[jawaban.skinType]! + 1;
       }
-      if (jawaban.skinType == "Sensitive") {
-        scoreSkinType["Sensitive"] = scoreSkinType["Sensitive"]! + 2;
+      if (jawaban.skinType == "Sensitif") {
+        scoreSkinType["Sensitif"] = scoreSkinType["Sensitif"]! + 2;
       }
       collectedIngredients.addAll(jawaban.recommendedIngredients);
     }

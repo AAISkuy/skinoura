@@ -4,19 +4,7 @@ import 'package:skinoura/views/form_quiz.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
 
 class Homepage extends StatefulWidget {
-  // final VoidCallback? onStartRoutineTap;
-  // final VoidCallback? onSkinQuizTap;
-  // final VoidCallback? onRecommendationTap;
-  // final VoidCallback? onRoutineScheduleTap;
-  // final VoidCallback? onIngredientCheckerTap;
-  const Homepage({
-    super.key,
-    // this.onStartRoutineTap,
-    // this.onIngredientCheckerTap,
-    // this.onRecommendationTap,
-    // this.onRoutineScheduleTap,
-    // this.onSkinQuizTap,
-  });
+  const Homepage({super.key});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -108,7 +96,7 @@ class _HomepageState extends State<Homepage> {
                   ),
                   const SizedBox(height: 12),
                   const Text(
-                    'Secara keseluruhan, kekuatan skin barrier anda baik.',
+                    'Secara keseluruhan, skin barrier anda baik.',
                     style: TextStyle(color: Colors.grey, fontSize: 14),
                   ),
 
