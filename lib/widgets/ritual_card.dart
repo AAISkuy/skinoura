@@ -57,7 +57,7 @@ class RitualStepCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 14),
 
-                  // Teks Detail (Tengah) - Otomatis kecoret (lineThrough) kalau dicentang
+                  // Teks Detail kecoret kalau dicentang
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
