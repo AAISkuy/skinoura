@@ -19,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
+            SizedBox(height: 20),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(24),
@@ -117,7 +118,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       horizontal: 8,
                       vertical: 4,
                     ),
-                    // leading: Text('data'),
+                    leading: CircleAvatar(
+                      backgroundColor: const Color(0xFFF5F5F5),
+                      radius: 22,
+                      child: Icon(
+                        Icons.book_online_outlined,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    title: const Text(
+                      'About us',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.black,
+                      ),
+                    ),
+                    subtitle: const Text(
+                      "Syarat dan peraturan",
+                      style: TextStyle(color: Colors.grey, fontSize: 13),
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right,
+                      color: Colors.blueGrey,
+                    ),
+                    onTap: () {},
                   ),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -137,11 +162,11 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black87,
+                        color: Colors.black,
                       ),
                     ),
                     subtitle: const Text(
-                      "Theme, Language, Units",
+                      "Tema, Bahasa, Sistem",
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                     trailing: const Icon(
@@ -167,7 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 241, 241, 241),
-                  foregroundColor: const Color(0xFF436155),
+                  foregroundColor: const Color(0xFFF24545),
                   elevation: 1,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
