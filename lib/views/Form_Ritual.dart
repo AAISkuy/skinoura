@@ -198,7 +198,7 @@ class _RitualPageState extends State<RitualPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Today's Ritual",
+                "Rutinitas Skincare",
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

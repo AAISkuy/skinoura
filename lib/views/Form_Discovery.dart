@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:skinoura/database/data_ingredient/list_ingredient.dart';
-import 'package:skinoura/database/data_ingredient/list_produk.dart';
+// import 'package:skinoura/database/data_ingredient/list_produk.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/ingredient_model.dart';
-import 'package:skinoura/models/product_model.dart';
+// import 'package:skinoura/models/product_model.dart';
 
 class DiscoverPage extends StatefulWidget {
   const DiscoverPage({super.key});
@@ -13,32 +13,32 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  String? selectedProduct;
-  String? selectedSkinType;
-  String? selectedCategory = "Semua";
-  final categories = [
-    "Semua",
-    "Face Wash",
-    "Serum",
-    "Moisturizer",
-    "Sunscreen",
-  ];
-  List<ProductModel> get filteredProducts {
-    return Productlist.where((product) {
-      final matchCategory =
-          selectedCategory == "Semua" || product.category == selectedCategory;
+  // String? selectedProduct;
+  // String? selectedSkinType;
+  // String? selectedCategory = "Semua";
+  // final categories = [
+  //   "Semua",
+  //   "Face Wash",
+  //   "Serum",
+  //   "Moisturizer",
+  //   "Sunscreen",
+  // ];
+  // List<ProductModel> get filteredProducts {
+  //   return Productlist.where((product) {
+  //     final matchCategory =
+  //         selectedCategory == "Semua" || product.category == selectedCategory;
 
-      final matchIngredient =
-          selectedIngredient == null ||
-          product.ingredients.contains(selectedIngredient);
+  //     final matchIngredient =
+  //         selectedIngredient == null ||
+  //         product.ingredients.contains(selectedIngredient);
 
-      final matchSkinType =
-          selectedSkinType == null ||
-          product.skinTypes.contains(selectedSkinType);
+  //     final matchSkinType =
+  //         selectedSkinType == null ||
+  //         product.skinTypes.contains(selectedSkinType);
 
-      return matchCategory && matchIngredient && matchSkinType;
-    }).toList();
-  }
+  //     return matchCategory && matchIngredient && matchSkinType;
+  //   }).toList();
+  // }
 
   final TextEditingController searchController = TextEditingController();
 
