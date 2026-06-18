@@ -58,7 +58,6 @@ class _FormloginState extends State<Formlogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Tips tambahan: Gradasi background mending ditaruh di Container paling luar Scaffold
       body: Container(
         width: double.infinity,
         height: double.infinity,
