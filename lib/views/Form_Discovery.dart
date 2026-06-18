@@ -55,9 +55,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
         selectedIngredient = ingredient;
       });
     } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text("Ingredient not found")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Ingredient tidak ditemukan")),
+      );
     }
   }
 
