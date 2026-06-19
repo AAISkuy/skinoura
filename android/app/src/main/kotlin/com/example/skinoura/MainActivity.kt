@@ -1,4 +1,4 @@
-package com.example.skinoura
+package com.kais.careskin
 
 import io.flutter.embedding.android.FlutterActivity
 
