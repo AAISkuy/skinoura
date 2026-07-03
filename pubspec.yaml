@@ -42,6 +42,7 @@ dependencies:
   dio: ^5.9.2
   retrofit: ^4.9.2
   build_runner: ^2.15.0
+  cloud_firestore: ^6.6.0
 
 dev_dependencies:
   flutter_test:
