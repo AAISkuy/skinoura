@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "482123686521",
+    "project_id": "careskin-project-9da69",
+    "storage_bucket": "careskin-project-9da69.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:482123686521:android:c74e3f0d59c81b2f826aa8",
+        "android_client_info": {
+          "package_name": "com.kais.careskin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDheKK-SS2aMefSf_3XvbFUXBIuuXWhGXA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

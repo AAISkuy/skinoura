@@ -1,11 +1,14 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/auth/splash_Screen.dart';
 import 'package:skinoura/database/preferences_handler.dart';
+import 'package:skinoura/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PreferencesHandler.init();
   await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
