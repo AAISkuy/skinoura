@@ -1,9 +1,9 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:skinoura/auth/form_login.dart';
-import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/models/user_model_sql.dart';
+import 'package:skinoura/services/firebase_auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LamanRegistrasi extends StatefulWidget {
   const LamanRegistrasi({super.key});
@@ -29,19 +29,34 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       return;
     }
 
-    final user = UserModelSql(nama: nama, email: email, password: pass);
-    bool succes = await DBHelper().registerUser(user);
-
-    if (!mounted) return;
-
-    if (succes) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Yeay Akun anda berhasil dibuat')),
+    try {
+      final user = await FirebaseAuthService().signUpWithEmailAndPassword(
+        nama: nama,
+        email: email,
+        password: pass,
       );
-      context.push(const Formlogin());
-    } else {
+
+      if (!mounted) return;
+
+      if (user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Yeay Akun anda berhasil dibuat')),
+        );
+        context.push(const Formlogin());
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Pendaftaran gagal. Silakan coba lagi.")),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Akun anda sudah terdaftar")),
+        SnackBar(content: Text(e.message ?? "Terjadi kesalahan autentikasi")),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}")),
       );
     }
   }
