@@ -23,14 +23,30 @@ class PreferencesHandler {
     return _prefs.getBool(_keyIsLogin) ?? false;
   }
 
+  static const _keyProfilePicture = "profilePicture";
+
   static Future<void> saveUser({
     required String nama,
     required String email,
     required String password,
+    String? profilePicture,
   }) async {
     await _prefs.setString(_keyNama, nama);
     await _prefs.setString(_keyEmail, email);
     await _prefs.setString(_keyPassword, password);
+    if (profilePicture != null) {
+      await _prefs.setString(_keyProfilePicture, profilePicture);
+    } else {
+      await _prefs.remove(_keyProfilePicture);
+    }
+  }
+
+  static String get profilePicture {
+    return _prefs.getString(_keyProfilePicture) ?? "";
+  }
+
+  static Future<void> saveProfilePicture(String base64Str) async {
+    await _prefs.setString(_keyProfilePicture, base64Str);
   }
 
   static String get nama {
@@ -68,10 +84,39 @@ class PreferencesHandler {
     return [];
   }
 
+  static const _keyNotificationEnabled = "notificationEnabled";
+  static const _keyNotificationHour = "notificationHour";
+  static const _keyNotificationMinute = "notificationMinute";
+
+  static Future<void> setNotificationEnabled(bool enabled) async {
+    await _prefs.setBool(_keyNotificationEnabled, enabled);
+  }
+
+  static bool get notificationEnabled {
+    return _prefs.getBool(_keyNotificationEnabled) ?? false;
+  }
+
+  static Future<void> setNotificationTime(int hour, int minute) async {
+    await _prefs.setInt(_keyNotificationHour, hour);
+    await _prefs.setInt(_keyNotificationMinute, minute);
+  }
+
+  static int get notificationHour {
+    return _prefs.getInt(_keyNotificationHour) ?? 8; // Default 8 AM
+  }
+
+  static int get notificationMinute {
+    return _prefs.getInt(_keyNotificationMinute) ?? 0; // Default 0
+  }
+
   static Future<void> logOut() async {
     await _prefs.remove(_keyIsLogin);
     await _prefs.remove(_keySkinType);
     await _prefs.remove(_keyIngredients);
+    await _prefs.remove(_keyNotificationEnabled);
+    await _prefs.remove(_keyNotificationHour);
+    await _prefs.remove(_keyNotificationMinute);
+    await _prefs.remove(_keyProfilePicture);
   }
 
   static Future<void> saveStepStatus(String key, bool isDone) async {

@@ -61,6 +61,23 @@ class _DiscoverPageState extends State<DiscoverPage> {
     }
   }
 
+  void selectRecommendedIngredient(String name) {
+    try {
+      final ingredient = ingredients.firstWhere(
+        (item) => item.name.toLowerCase() == name.toLowerCase(),
+      );
+
+      setState(() {
+        searchController.text = ingredient.name;
+        selectedIngredient = ingredient;
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Detail untuk $name tidak ditemukan")),
+      );
+    }
+  }
+
   Color getSafetyColor(String safety) {
     switch (safety) {
       case "Safe":
@@ -126,20 +143,26 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         runSpacing: 8,
                         children: PreferencesHandler.recommendedIngredients
                             .map(
-                              (ingredient) => Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12,
-                                  vertical: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEAF4EF),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  ingredient,
-                                  style: const TextStyle(
-                                    color: Color(0xFF436155),
-                                    fontWeight: FontWeight.w600,
+                              (ingredient) => GestureDetector(
+                                onTap: () => selectRecommendedIngredient(ingredient),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEAF4EF),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: const Color(0xFF436155).withOpacity(0.15),
+                                    ),
+                                  ),
+                                  child: Text(
+                                    ingredient,
+                                    style: const TextStyle(
+                                      color: Color(0xFF436155),
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),

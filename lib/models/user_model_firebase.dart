@@ -6,6 +6,9 @@ class UserModelFirebase {
   final String email;
   final String password;
   final DateTime? createdAt;
+  final String? profilePicture;
+  final String? skinType;
+  final List<String>? recommendedIngredients;
 
   UserModelFirebase({
     this.uid,
@@ -13,6 +16,9 @@ class UserModelFirebase {
     required this.email,
     required this.password,
     this.createdAt,
+    this.profilePicture,
+    this.skinType,
+    this.recommendedIngredients,
   });
 
   UserModelFirebase copyWith({
@@ -21,6 +27,9 @@ class UserModelFirebase {
     String? email,
     String? password,
     DateTime? createdAt,
+    String? profilePicture,
+    String? skinType,
+    List<String>? recommendedIngredients,
   }) {
     return UserModelFirebase(
       uid: uid ?? this.uid,
@@ -28,6 +37,9 @@ class UserModelFirebase {
       email: email ?? this.email,
       password: password ?? this.password,
       createdAt: createdAt ?? this.createdAt,
+      profilePicture: profilePicture ?? this.profilePicture,
+      skinType: skinType ?? this.skinType,
+      recommendedIngredients: recommendedIngredients ?? this.recommendedIngredients,
     );
   }
 
@@ -40,12 +52,21 @@ class UserModelFirebase {
         parsedCreatedAt = DateTime.tryParse(json['createdAt'] as String);
       }
     }
+
+    final List<dynamic>? recIngredientsRaw = json['recommendedIngredients'] as List<dynamic>?;
+    final List<String>? recIngredients = recIngredientsRaw != null
+        ? List<String>.from(recIngredientsRaw)
+        : null;
+
     return UserModelFirebase(
       uid: json['uid'] as String?,
       nama: json['nama'] as String?,
       email: json['email'] as String? ?? '',
       password: json['password'] as String? ?? '',
       createdAt: parsedCreatedAt,
+      profilePicture: json['profilePicture'] as String?,
+      skinType: json['skinType'] as String?,
+      recommendedIngredients: recIngredients,
     );
   }
 
@@ -59,6 +80,9 @@ class UserModelFirebase {
       'email': email,
       'password': password,
       'createdAt': createdAt?.toIso8601String(),
+      'profilePicture': profilePicture,
+      'skinType': skinType,
+      'recommendedIngredients': recommendedIngredients,
     };
   }
 
@@ -66,7 +90,7 @@ class UserModelFirebase {
 
   @override
   String toString() {
-    return 'UserModelFirebase(uid: $uid, nama: $nama, email: $email, password: $password, createdAt: $createdAt)';
+    return 'UserModelFirebase(uid: $uid, nama: $nama, email: $email, password: $password, createdAt: $createdAt, profilePicture: $profilePicture, skinType: $skinType, recommendedIngredients: $recommendedIngredients)';
   }
 
   @override
@@ -77,7 +101,10 @@ class UserModelFirebase {
         other.nama == nama &&
         other.email == email &&
         other.password == password &&
-        other.createdAt == createdAt;
+        other.createdAt == createdAt &&
+        other.profilePicture == profilePicture &&
+        other.skinType == skinType &&
+        other.recommendedIngredients == recommendedIngredients;
   }
 
   @override
@@ -86,7 +113,10 @@ class UserModelFirebase {
         nama.hashCode ^
         email.hashCode ^
         password.hashCode ^
-        createdAt.hashCode;
+        createdAt.hashCode ^
+        profilePicture.hashCode ^
+        skinType.hashCode ^
+        recommendedIngredients.hashCode;
   }
 }
 

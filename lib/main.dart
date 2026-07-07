@@ -5,11 +5,13 @@ import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/auth/splash_Screen.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/firebase_options.dart';
+import 'package:skinoura/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await PreferencesHandler.init();
+  await NotificationService.init();
   await initializeDateFormatting('id_ID', null);
   runApp(const MyApp());
 }

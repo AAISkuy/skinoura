@@ -26,7 +26,7 @@ class DBHelper {
 
     return await openDatabase(
       path,
-      version: 2,
+      version: 4,
       onCreate: (db, version) async {
         await db.execute('''
         CREATE TABLE users(
@@ -43,9 +43,27 @@ class DBHelper {
           title TEXT,
           subtitle TEXT,
           isDone INTEGER DEFAULT 0,
-          ownerEmail TEXT
+          ownerEmail TEXT,
+          createdAt TEXT,
+          deletedAt TEXT
         )
       ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 3) {
+          try {
+            await db.execute("ALTER TABLE rituals ADD COLUMN createdAt TEXT");
+          } catch (e) {
+            log("Error migrating database: $e");
+          }
+        }
+        if (oldVersion < 4) {
+          try {
+            await db.execute("ALTER TABLE rituals ADD COLUMN deletedAt TEXT");
+          } catch (e) {
+            log("Error migrating database: $e");
+          }
+        }
       },
     );
   }
@@ -153,6 +171,19 @@ class DBHelper {
     final db = await database;
 
     int count = await db.delete('rituals', where: 'id = ?', whereArgs: [id]);
+
+    return count > 0;
+  }
+
+  Future<bool> softDeleteRitual(int id, String deletedAt) async {
+    final db = await database;
+
+    int count = await db.update(
+      'rituals',
+      {'deletedAt': deletedAt},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
 
     return count > 0;
   }

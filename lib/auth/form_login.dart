@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:skinoura/auth/Form_Registrasi.dart';
-import 'package:skinoura/database/database_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
-import 'package:skinoura/models/user_model_sql.dart';
+import 'package:skinoura/services/firebase_auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skinoura/widgets/app_BottomNav.dart';
 
 class Formlogin extends StatefulWidget {
@@ -30,26 +30,51 @@ class _FormloginState extends State<Formlogin> {
       return;
     }
 
-    final pengguna = await DBHelper().loginUser(
-      UserModelSql(email: email, password: pass),
-    );
-
-    if (!mounted) return;
-
-    if (pengguna != null) {
-      await PreferencesHandler.setLogin(true);
-
-      await PreferencesHandler.saveUser(
-        nama: pengguna.nama ?? "",
-        email: pengguna.email,
-        password: pengguna.password,
+    try {
+      final pengguna = await FirebaseAuthService().signInWithEmailAndPassword(
+        email: email,
+        password: pass,
       );
 
-      context.pushAndRemoveAll(AppBottomnav());
-    } else {
+      if (!mounted) return;
+
+      if (pengguna != null) {
+        await PreferencesHandler.setLogin(true);
+
+        await PreferencesHandler.saveUser(
+          nama: pengguna.nama ?? "",
+          email: pengguna.email,
+          password: pengguna.password,
+          profilePicture: pengguna.profilePicture,
+        );
+
+        if (pengguna.skinType != null) {
+          await PreferencesHandler.saveSkinType(pengguna.skinType!);
+        }
+        if (pengguna.recommendedIngredients != null) {
+          await PreferencesHandler.saveRecommendedIngredients(pengguna.recommendedIngredients!);
+        }
+
+        context.pushAndRemoveAll(AppBottomnav());
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Login gagal. Akun tidak ditemukan."),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Login gagal. Email atau Password salah."),
+        SnackBar(
+          content: Text(e.message ?? "Login gagal. Email atau Password salah."),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}"),
         ),
       );
     }
@@ -205,56 +230,6 @@ class _FormloginState extends State<Formlogin> {
                               child: const Text(
                                 "Sign In",
                                 style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        const Center(child: Text("OR")),
-                        Container(
-                          margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  print("Sudah memenuhi syarat");
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: const Text("Berhasil"),
-                                        content: const Text(
-                                          "Anda berhasil login",
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                            child: const Text("Lanjut"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7C9A92),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    "assets/images/google.png",
-                                    width: 20,
-                                  ),
-                                  const Text(
-                                    "   Continue with Google",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ],
                               ),
                             ),
                           ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:skinoura/database/data_ingredient/data_quiz.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/question_model.dart';
@@ -49,6 +51,21 @@ class _QuizPageState extends State<QuizPage> {
 
     await PreferencesHandler.saveSkinType(tipeKulitFinal);
     await PreferencesHandler.saveRecommendedIngredients(listIngredients);
+
+    // Unggah ke Firestore (tanpa await agar respons dialog instan)
+    final currentUser = FirebaseAuth.instance.currentUser;
+    if (currentUser != null) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .update({
+            'skinType': tipeKulitFinal,
+            'recommendedIngredients': listIngredients,
+          })
+          .catchError((e) {
+            print("Error updating skin type in Firestore: $e");
+          });
+    }
 
     // Tampilin dialog berhasil sebelum balik ke halaman utama/profile
     showDialog(

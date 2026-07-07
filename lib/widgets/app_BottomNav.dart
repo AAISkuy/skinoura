@@ -1,7 +1,6 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
-import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/views/form_discovery.dart';
 import 'package:skinoura/views/form_home.dart';
 import 'package:skinoura/views/form_profile.dart';
@@ -16,13 +15,21 @@ class AppBottomnav extends StatefulWidget {
 
 class _AppBottomNav extends State<AppBottomnav> {
   int _selectedIndex = 0;
+
+  ImageProvider _getProfileImage() {
+    final String base64Str = PreferencesHandler.profilePicture;
+    if (base64Str.isNotEmpty) {
+      try {
+        return MemoryImage(base64Decode(base64Str));
+      } catch (e) {
+        print("Error decoding profile image: $e");
+      }
+    }
+    return const AssetImage('assets/images/Exampprofil.jpeg');
+  }
   String? selected;
 
-  final List<Widget> _pages = [
-    const Homepage(),
-    const DiscoverPage(),
-    const RitualPage(),
-  ];
+
 
   // List<Widget> get _pages => [
   //   Homepage(
@@ -73,56 +80,31 @@ class _AppBottomNav extends State<AppBottomnav> {
         ),
         centerTitle: true,
         actions: [
-          PopupMenuButton<String>(
-            position: PopupMenuPosition.under,
-            onSelected: (value) async {
-              if (value == 'Profile') {
-                print('pindah ke halaman profil');
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ProfilePage()),
-                );
-              } else if (value == 'Logout') {
-                print('Proses Logout');
-                await PreferencesHandler.logOut();
-                if (!mounted) return;
-                context.pushAndRemoveAll(const Formlogin());
-              }
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProfilePage()),
+              ).then((_) {
+                setState(() {});
+              });
             },
-            child: const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: CircleAvatar(
-                backgroundImage: AssetImage('assets/images/Exampprofil.jpeg'),
+                backgroundImage: _getProfileImage(),
               ),
             ),
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem<String>(
-                value: 'Profile',
-                child: Row(
-                  children: [
-                    Icon(Icons.person),
-                    SizedBox(width: 8),
-                    Text('Profile'),
-                  ],
-                ),
-              ),
-              const PopupMenuItem<String>(
-                value: 'Logout',
-                child: Row(
-                  children: [
-                    Icon(Icons.logout),
-                    SizedBox(width: 8),
-                    Text('Logout'),
-                  ],
-                ),
-              ),
-            ],
           ),
         ],
       ),
       backgroundColor: const Color.fromARGB(255, 226, 237, 243),
 
-      body: _pages[_selectedIndex],
+      body: [
+        Homepage(userName: PreferencesHandler.nama),
+        const DiscoverPage(),
+        const RitualPage(),
+      ][_selectedIndex],
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

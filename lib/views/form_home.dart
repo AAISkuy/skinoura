@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/views/form_quiz.dart';
 import 'package:skinoura/widgets/indicator_card.dart';
 
 class Homepage extends StatefulWidget {
-  const Homepage({super.key});
+  final String userName;
+  const Homepage({super.key, required this.userName});
 
   @override
   State<Homepage> createState() => _HomepageState();
@@ -27,7 +27,7 @@ class _HomepageState extends State<Homepage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Halo, ${PreferencesHandler.nama}.',
+                      'Halo, ${widget.userName}.',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

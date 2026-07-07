@@ -4,6 +4,8 @@ class RitualModel {
   String subtitle;
   bool isDone;
   String ownerEmail;
+  String? createdAt;
+  String? deletedAt;
 
   RitualModel({
     this.id,
@@ -11,6 +13,8 @@ class RitualModel {
     required this.subtitle,
     required this.isDone,
     required this.ownerEmail,
+    this.createdAt,
+    this.deletedAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +24,8 @@ class RitualModel {
       'subtitle': subtitle,
       'isDone': isDone ? 1 : 0,
       'ownerEmail': ownerEmail,
+      'createdAt': createdAt,
+      'deletedAt': deletedAt,
     };
   }
 
@@ -30,6 +36,8 @@ class RitualModel {
       subtitle: map['subtitle'],
       isDone: map['isDone'] == 1,
       ownerEmail: map['ownerEmail'],
+      createdAt: map['createdAt'],
+      deletedAt: map['deletedAt'],
     );
   }
 }
