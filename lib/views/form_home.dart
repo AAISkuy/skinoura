@@ -6,6 +6,8 @@ import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/ritual_model.dart';
 import 'package:intl/intl.dart';
 
+import 'package:skinoura/database/firebase_db_helper.dart';
+
 class Homepage extends StatefulWidget {
   final String userName;
   const Homepage({super.key, required this.userName});
@@ -34,6 +36,13 @@ class _HomepageState extends State<Homepage> {
     try {
       final email = PreferencesHandler.email;
       if (email.isNotEmpty) {
+        // Panggil sinkronisasi background ke Firebase Firestore
+        try {
+          await FirebaseDBHelper().syncData();
+        } catch (e) {
+          print("Homepage background sync failed: $e");
+        }
+
         final allRituals = await DBHelper().getRitualsByEmail(email);
         final String dateKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
         
@@ -75,6 +84,10 @@ class _HomepageState extends State<Homepage> {
   }
 
   String _getSkinConditionSummaryText() {
+    final String skinType = PreferencesHandler.skinType;
+    if (skinType.isEmpty) {
+      return "Anda belum mengisi kuis dan membuat routine skincare protocol Anda.";
+    }
     if (rituals.isEmpty) {
       return "Belum ada skincare protocol yang ditambahkan hari ini.";
     }

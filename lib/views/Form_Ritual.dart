@@ -256,70 +256,9 @@ class _RitualPageState extends State<RitualPage> {
     });
 
     try {
-      // 1. Pastikan user terautentikasi ke Firebase Auth
-      var currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser == null) {
-        final password = PreferencesHandler.password;
-        if (password.isNotEmpty) {
-          try {
-            final credential = await FirebaseAuth.instance
-                .signInWithEmailAndPassword(email: email, password: password);
-            currentUser = credential.user;
-          } catch (e) {
-            print("Auto login ke Firebase Auth gagal: $e");
-          }
-        }
-      }
-
-      if (currentUser == null) {
-        print("Sinkronisasi dibatalkan: Pengguna belum terautentikasi.");
-        return;
-      }
-
-      // 2. Sinkronisasi daftar ritual (SQLite <=> Firestore)
-      final localRituals = await DBHelper().getRitualsByEmail(email);
-      final remoteRituals = await FirebaseDBHelper().getRitualsByEmail(email);
-
-      final localMap = {for (var r in localRituals) r.id: r};
-      final remoteMap = {for (var r in remoteRituals) r.id: r};
-
-      // Sync dari remote ke lokal (SQLite)
-      for (var remoteRitual in remoteRituals) {
-        final localRitual = localMap[remoteRitual.id];
-        if (localRitual == null) {
-          await DBHelper().insertRitual(remoteRitual);
-        } else {
-          // Jika ada perbedaan isi, perbarui data lokal
-          if (localRitual.title != remoteRitual.title ||
-              localRitual.subtitle != remoteRitual.subtitle ||
-              localRitual.createdAt != remoteRitual.createdAt ||
-              localRitual.deletedAt != remoteRitual.deletedAt) {
-            await DBHelper().updateRitual(remoteRitual);
-          }
-        }
-      }
-
-      // Sync dari lokal ke remote (Firestore)
-      for (var localRitual in localRituals) {
-        if (!remoteMap.containsKey(localRitual.id)) {
-          await FirebaseDBHelper().insertRitual(localRitual);
-        }
-      }
-
-      // 3. Sinkronisasi checklist status harian ke SharedPreferences
-      final snapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(currentUser.uid)
-          .collection('step_statuses')
-          .get();
-
-      for (var doc in snapshot.docs) {
-        final String key = doc.id;
-        final bool isDone = doc.data()['isDone'] ?? false;
-        await PreferencesHandler.saveStepStatus(key, isDone);
-      }
+      await FirebaseDBHelper().syncData();
     } catch (e) {
-      print("Error syncing with Firebase: $e");
+      print("Error during sync in Ritual page: $e");
     } finally {
       if (mounted) {
         setState(() {

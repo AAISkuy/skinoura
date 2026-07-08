@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/models/user_model_firebase.dart';
+import 'package:skinoura/database/database_helper.dart';
+import 'package:skinoura/database/preferences_handler.dart';
 
 class FirebaseDBHelper {
   static final FirebaseDBHelper _instance = FirebaseDBHelper._internal();
@@ -190,6 +192,115 @@ class FirebaseDBHelper {
     } catch (e) {
       log('FirebaseDBHelper deleteRitual error: $e');
       return false;
+    }
+  }
+
+  // Sinkronisasi data menyeluruh dari Firebase ke lokal (dan sebaliknya)
+  Future<void> syncData() async {
+    final email = PreferencesHandler.email;
+    if (email.isEmpty) return;
+
+    try {
+      // 1. Pastikan user terautentikasi ke Firebase Auth
+      var currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        final password = PreferencesHandler.password;
+        if (password.isNotEmpty) {
+          try {
+            final credential = await FirebaseAuth.instance
+                .signInWithEmailAndPassword(email: email, password: password);
+            currentUser = credential.user;
+          } catch (e) {
+            log("Auto login ke Firebase Auth gagal: $e");
+          }
+        }
+      }
+
+      if (currentUser == null) {
+        log("Sinkronisasi dibatalkan: Pengguna belum terautentikasi.");
+        return;
+      }
+
+      // 2. Sinkronisasi data profil user dari Firestore ke local Preferences
+      final userDoc = await _firestore.collection('users').doc(currentUser.uid).get();
+      if (userDoc.exists) {
+        final data = userDoc.data();
+        if (data != null) {
+          // Sync skinType
+          final String? remoteSkinType = data['skinType'] as String?;
+          if (remoteSkinType != null && remoteSkinType.isNotEmpty) {
+            await PreferencesHandler.saveSkinType(remoteSkinType);
+          }
+          
+          // Sync recommended ingredients
+          final List<dynamic>? remoteIngredients = data['recommendedIngredients'] as List<dynamic>?;
+          if (remoteIngredients != null) {
+            await PreferencesHandler.saveRecommendedIngredients(
+              remoteIngredients.map((e) => e.toString()).toList(),
+            );
+          }
+
+          // Sync profile picture
+          final String? remoteProfilePic = data['profilePicture'] as String?;
+          if (remoteProfilePic != null && remoteProfilePic.isNotEmpty) {
+            await PreferencesHandler.saveProfilePicture(remoteProfilePic);
+          }
+
+          // Sync notification settings
+          final bool? remoteNotifEnabled = data['notificationEnabled'] as bool?;
+          if (remoteNotifEnabled != null) {
+            await PreferencesHandler.setNotificationEnabled(remoteNotifEnabled);
+            final int hour = data['notificationHour'] as int? ?? 8;
+            final int minute = data['notificationMinute'] as int? ?? 0;
+            await PreferencesHandler.setNotificationTime(hour, minute);
+          }
+        }
+      }
+
+      // 3. Sinkronisasi daftar ritual (SQLite <=> Firestore)
+      final localRituals = await DBHelper().getRitualsByEmail(email);
+      final remoteRituals = await getRitualsByEmail(email);
+
+      final localMap = {for (var r in localRituals) r.id: r};
+      final remoteMap = {for (var r in remoteRituals) r.id: r};
+
+      // Sync dari remote ke lokal (SQLite)
+      for (var remoteRitual in remoteRituals) {
+        final localRitual = localMap[remoteRitual.id];
+        if (localRitual == null) {
+          await DBHelper().insertRitual(remoteRitual);
+        } else {
+          // Jika ada perbedaan isi, perbarui data lokal
+          if (localRitual.title != remoteRitual.title ||
+              localRitual.subtitle != remoteRitual.subtitle ||
+              localRitual.createdAt != remoteRitual.createdAt ||
+              localRitual.deletedAt != remoteRitual.deletedAt) {
+            await DBHelper().updateRitual(remoteRitual);
+          }
+        }
+      }
+
+      // Sync dari lokal ke remote (Firestore)
+      for (var localRitual in localRituals) {
+        if (!remoteMap.containsKey(localRitual.id)) {
+          await insertRitual(localRitual);
+        }
+      }
+
+      // 4. Sinkronisasi checklist status harian ke SharedPreferences
+      final snapshot = await _firestore
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('step_statuses')
+          .get();
+
+      for (var doc in snapshot.docs) {
+        final String key = doc.id;
+        final bool isDone = doc.data()['isDone'] ?? false;
+        await PreferencesHandler.saveStepStatus(key, isDone);
+      }
+    } catch (e) {
+      log("Error syncing with Firebase: $e");
     }
   }
 }
