@@ -1,10 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:skinoura/auth/Form_Registrasi.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/services/firebase_auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:skinoura/services/notification_service.dart';
 import 'package:skinoura/widgets/app_BottomNav.dart';
 
 class Formlogin extends StatefulWidget {
@@ -44,7 +45,7 @@ class _FormloginState extends State<Formlogin> {
         await PreferencesHandler.saveUser(
           nama: pengguna.nama ?? "",
           email: pengguna.email,
-          password: pengguna.password,
+          password: pass,
           profilePicture: pengguna.profilePicture,
         );
 
@@ -52,15 +53,47 @@ class _FormloginState extends State<Formlogin> {
           await PreferencesHandler.saveSkinType(pengguna.skinType!);
         }
         if (pengguna.recommendedIngredients != null) {
-          await PreferencesHandler.saveRecommendedIngredients(pengguna.recommendedIngredients!);
+          await PreferencesHandler.saveRecommendedIngredients(
+            pengguna.recommendedIngredients!,
+          );
+        }
+
+        // Sinkronisasi pengingat harian dari Firestore ke perangkat lokal
+        if (pengguna.notificationEnabled != null) {
+          await PreferencesHandler.setNotificationEnabled(
+            pengguna.notificationEnabled!,
+          );
+        }
+        if (pengguna.notificationHour != null &&
+            pengguna.notificationMinute != null) {
+          await PreferencesHandler.setNotificationTime(
+            pengguna.notificationHour!,
+            pengguna.notificationMinute!,
+          );
+        }
+
+        // Aktifkan alarm pengingat jika sebelumnya aktif di Firestore
+        if (pengguna.notificationEnabled == true &&
+            pengguna.notificationHour != null &&
+            pengguna.notificationMinute != null) {
+          try {
+            await NotificationService.scheduleDailyNotification(
+              id: 100,
+              title: "Waktunya Skincare-an! ✨",
+              body:
+                  "Yuk, lakukan rutinitas skincare kamu hari ini agar kulit tetap sehat dan terawat!",
+              hour: pengguna.notificationHour!,
+              minute: pengguna.notificationMinute!,
+            );
+          } catch (e) {
+            print("Error scheduling notification after login: $e");
+          }
         }
 
         context.pushAndRemoveAll(AppBottomnav());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Login gagal. Akun tidak ditemukan."),
-          ),
+          const SnackBar(content: Text("Login gagal. Akun tidak ditemukan.")),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -74,7 +107,9 @@ class _FormloginState extends State<Formlogin> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}"),
+          content: Text(
+            "Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}",
+          ),
         ),
       );
     }
@@ -199,21 +234,21 @@ class _FormloginState extends State<Formlogin> {
                             },
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Container(
-                          margin: const EdgeInsets.only(right: 22),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  print("Forgot Password Clicked");
-                                },
-                                child: const Text("Forgot Password?"),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // const SizedBox(height: 10),
+                        // Container(
+                        //   margin: const EdgeInsets.only(right: 22),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       GestureDetector(
+                        //         onTap: () {
+                        //           print("Forgot Password Clicked");
+                        //         },
+                        //         child: const Text("Forgot Password?"),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                         Container(
                           margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                           child: SizedBox(

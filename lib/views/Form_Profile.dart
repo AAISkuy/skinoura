@@ -33,9 +33,9 @@ class _ProfilePageState extends State<ProfilePage> {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(
         source: source,
-        maxWidth: 200,
-        maxHeight: 200,
-        imageQuality: 60,
+        maxWidth: 600,
+        maxHeight: 600,
+        imageQuality: 85,
       );
 
       if (image != null) {
@@ -264,18 +264,65 @@ class _ProfilePageState extends State<ProfilePage> {
                     onTap: _showImageSourceActionSheet,
                     child: Stack(
                       children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: _getProfileImage(),
+                        Container(
+                          padding: const EdgeInsets.all(
+                            4,
+                          ), // Jarak border ke foto
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: const LinearGradient(
+                              colors: [Color(0xFF7C9A92), Color(0xFF436155)],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0x33436155),
+                                blurRadius: 12,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: Container(
+                            padding: const EdgeInsets.all(
+                              2,
+                            ), // Lapisan putih pembatas
+                            decoration: const BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: CircleAvatar(
+                              radius: 46,
+                              backgroundColor: const Color(0xFFE2ECE9),
+                              backgroundImage: PreferencesHandler.profilePicture.isNotEmpty
+                                  ? _getProfileImage()
+                                  : null,
+                              child: PreferencesHandler.profilePicture.isEmpty
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 46,
+                                      color: Color(0xFF7C9A92),
+                                    )
+                                  : null,
+                            ),
+                          ),
                         ),
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF436155),
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF436155),
                               shape: BoxShape.circle,
+                              border: Border.all(color: Colors.white, width: 2),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0x26000000),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
                             child: const Icon(
                               Icons.camera_alt,
@@ -293,9 +340,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const SizedBox(
-                        width: 20,
-                      ), // Menyeimbangkan ikon 16px + spasi 4px agar teks nama center sempurna
+                      const SizedBox(width: 20),
                       Text(
                         PreferencesHandler.nama,
                         style: const TextStyle(
@@ -367,12 +412,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       backgroundColor: const Color(0xFFF5F5F5),
                       radius: 22,
                       child: Icon(
-                        Icons.book_online_outlined,
+                        Icons.settings_outlined,
                         color: Colors.grey[700],
                       ),
                     ),
                     title: const Text(
-                      'About us',
+                      "Preferences",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -380,7 +425,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     subtitle: const Text(
-                      "Syarat dan peraturan",
+                      "Tema dan Bahasa",
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                     trailing: const Icon(
@@ -398,12 +443,12 @@ class _ProfilePageState extends State<ProfilePage> {
                       backgroundColor: const Color(0xFFF5F5F5),
                       radius: 22,
                       child: Icon(
-                        Icons.settings_outlined,
+                        Icons.book_online_outlined,
                         color: Colors.grey[700],
                       ),
                     ),
                     title: const Text(
-                      "Preferences",
+                      'Tentang Kami',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
@@ -411,7 +456,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     subtitle: const Text(
-                      "Tema, Bahasa, Sistem",
+                      "Syarat, Ketentuan, dan Kebijakan Privasi",
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
                     trailing: const Icon(

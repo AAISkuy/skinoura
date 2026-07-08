@@ -4,42 +4,50 @@ class UserModelFirebase {
   final String? uid;
   final String? nama;
   final String email;
-  final String password;
   final DateTime? createdAt;
   final String? profilePicture;
   final String? skinType;
   final List<String>? recommendedIngredients;
+  final bool? notificationEnabled;
+  final int? notificationHour;
+  final int? notificationMinute;
 
   UserModelFirebase({
     this.uid,
     this.nama,
     required this.email,
-    required this.password,
     this.createdAt,
     this.profilePicture,
     this.skinType,
     this.recommendedIngredients,
+    this.notificationEnabled,
+    this.notificationHour,
+    this.notificationMinute,
   });
 
   UserModelFirebase copyWith({
     String? uid,
     String? nama,
     String? email,
-    String? password,
     DateTime? createdAt,
     String? profilePicture,
     String? skinType,
     List<String>? recommendedIngredients,
+    bool? notificationEnabled,
+    int? notificationHour,
+    int? notificationMinute,
   }) {
     return UserModelFirebase(
       uid: uid ?? this.uid,
       nama: nama ?? this.nama,
       email: email ?? this.email,
-      password: password ?? this.password,
       createdAt: createdAt ?? this.createdAt,
       profilePicture: profilePicture ?? this.profilePicture,
       skinType: skinType ?? this.skinType,
       recommendedIngredients: recommendedIngredients ?? this.recommendedIngredients,
+      notificationEnabled: notificationEnabled ?? this.notificationEnabled,
+      notificationHour: notificationHour ?? this.notificationHour,
+      notificationMinute: notificationMinute ?? this.notificationMinute,
     );
   }
 
@@ -62,11 +70,13 @@ class UserModelFirebase {
       uid: json['uid'] as String?,
       nama: json['nama'] as String?,
       email: json['email'] as String? ?? '',
-      password: json['password'] as String? ?? '',
       createdAt: parsedCreatedAt,
       profilePicture: json['profilePicture'] as String?,
       skinType: json['skinType'] as String?,
       recommendedIngredients: recIngredients,
+      notificationEnabled: json['notificationEnabled'] as bool?,
+      notificationHour: json['notificationHour'] as int?,
+      notificationMinute: json['notificationMinute'] as int?,
     );
   }
 
@@ -78,11 +88,13 @@ class UserModelFirebase {
       'uid': uid,
       'nama': nama,
       'email': email,
-      'password': password,
       'createdAt': createdAt?.toIso8601String(),
       'profilePicture': profilePicture,
       'skinType': skinType,
       'recommendedIngredients': recommendedIngredients,
+      'notificationEnabled': notificationEnabled,
+      'notificationHour': notificationHour,
+      'notificationMinute': notificationMinute,
     };
   }
 
@@ -90,7 +102,7 @@ class UserModelFirebase {
 
   @override
   String toString() {
-    return 'UserModelFirebase(uid: $uid, nama: $nama, email: $email, password: $password, createdAt: $createdAt, profilePicture: $profilePicture, skinType: $skinType, recommendedIngredients: $recommendedIngredients)';
+    return 'UserModelFirebase(uid: $uid, nama: $nama, email: $email, createdAt: $createdAt, profilePicture: $profilePicture, skinType: $skinType, recommendedIngredients: $recommendedIngredients, notificationEnabled: $notificationEnabled, notificationHour: $notificationHour, notificationMinute: $notificationMinute)';
   }
 
   @override
@@ -100,11 +112,13 @@ class UserModelFirebase {
     return other.uid == uid &&
         other.nama == nama &&
         other.email == email &&
-        other.password == password &&
         other.createdAt == createdAt &&
         other.profilePicture == profilePicture &&
         other.skinType == skinType &&
-        other.recommendedIngredients == recommendedIngredients;
+        other.recommendedIngredients == recommendedIngredients &&
+        other.notificationEnabled == notificationEnabled &&
+        other.notificationHour == notificationHour &&
+        other.notificationMinute == notificationMinute;
   }
 
   @override
@@ -112,11 +126,12 @@ class UserModelFirebase {
     return uid.hashCode ^
         nama.hashCode ^
         email.hashCode ^
-        password.hashCode ^
         createdAt.hashCode ^
         profilePicture.hashCode ^
         skinType.hashCode ^
-        recommendedIngredients.hashCode;
+        recommendedIngredients.hashCode ^
+        notificationEnabled.hashCode ^
+        notificationHour.hashCode ^
+        notificationMinute.hashCode;
   }
 }
-

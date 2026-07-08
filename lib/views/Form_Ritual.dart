@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skinoura/database/database_helper.dart';
+import 'package:skinoura/database/firebase_db_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/services/notification_service.dart';
@@ -22,7 +25,11 @@ class _RitualPageState extends State<RitualPage> {
   bool get _isPastDate {
     final DateTime now = DateTime.now();
     final DateTime today = DateTime(now.year, now.month, now.day);
-    final DateTime selected = DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day);
+    final DateTime selected = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
     return selected.isBefore(today);
   }
 
@@ -39,9 +46,12 @@ class _RitualPageState extends State<RitualPage> {
     // Filter agar langkah skincare yang dibuat hari ini tidak muncul di hari kemarin,
     // dan langkah yang dihapus tidak muncul di hari penghapusan serta setelahnya.
     final filteredData = data.where((ritual) {
-      if (ritual.createdAt == null && ritual.deletedAt == null) return true; // Data lama
-      final bool isCreated = ritual.createdAt == null || ritual.createdAt!.compareTo(dateKey) <= 0;
-      final bool isNotDeleted = ritual.deletedAt == null || dateKey.compareTo(ritual.deletedAt!) < 0;
+      if (ritual.createdAt == null && ritual.deletedAt == null)
+        return true; // Data lama
+      final bool isCreated =
+          ritual.createdAt == null || ritual.createdAt!.compareTo(dateKey) <= 0;
+      final bool isNotDeleted =
+          ritual.deletedAt == null || dateKey.compareTo(ritual.deletedAt!) < 0;
       return isCreated && isNotDeleted;
     }).toList();
 
@@ -65,6 +75,26 @@ class _RitualPageState extends State<RitualPage> {
     });
   }
 
+  Future<User?> _getFirebaseUser() async {
+    var user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      final email = PreferencesHandler.email;
+      final password = PreferencesHandler.password;
+      if (email.isNotEmpty && password.isNotEmpty) {
+        try {
+          final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+          user = credential.user;
+        } catch (e) {
+          print("Background sign-in failed: $e");
+        }
+      }
+    }
+    return user;
+  }
+
   Future<void> _toggleNotification(bool value) async {
     if (value) {
       // Minta izin notifikasi terlebih dahulu
@@ -73,7 +103,9 @@ class _RitualPageState extends State<RitualPage> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text("Izin notifikasi ditolak. Silakan aktifkan izin di pengaturan."),
+              content: Text(
+                "Izin notifikasi ditolak. Silakan aktifkan izin di pengaturan.",
+              ),
               backgroundColor: Colors.redAccent,
             ),
           );
@@ -82,18 +114,20 @@ class _RitualPageState extends State<RitualPage> {
       }
 
       await PreferencesHandler.setNotificationEnabled(true);
-      
+
       // Kirim notifikasi instan sebagai konfirmasi bahwa fitur aktif & berfungsi
       await NotificationService.showImmediateNotification(
         id: 101,
         title: "Pengingat Skincare Aktif! 🔔",
-        body: "Kami akan mengingatkanmu setiap hari pada pukul ${_reminderTime.format(context)}.",
+        body:
+            "Kami akan mengingatkanmu setiap hari pada pukul ${_reminderTime.format(context)}.",
       );
 
       await NotificationService.scheduleDailyNotification(
         id: 100, // ID konstan untuk pengingat rutinitas
         title: "Waktunya Skincare-an! ✨",
-        body: "Yuk, lakukan rutinitas skincare kamu hari ini agar kulit tetap sehat dan terawat!",
+        body:
+            "Yuk, lakukan rutinitas skincare kamu hari ini agar kulit tetap sehat dan terawat!",
         hour: _reminderTime.hour,
         minute: _reminderTime.minute,
       );
@@ -129,6 +163,22 @@ class _RitualPageState extends State<RitualPage> {
         );
       }
     }
+
+    // Sinkronisasi status pengingat harian ke Firestore
+    final currentUser = await _getFirebaseUser();
+    if (currentUser != null) {
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .set({
+            'notificationEnabled': value,
+            'notificationHour': _reminderTime.hour,
+            'notificationMinute': _reminderTime.minute,
+          }, SetOptions(merge: true))
+          .catchError(
+            (e) => print("Gagal sync status notifikasi ke Firestore: $e"),
+          );
+    }
   }
 
   Future<void> _selectTime() async {
@@ -160,7 +210,8 @@ class _RitualPageState extends State<RitualPage> {
         await NotificationService.scheduleDailyNotification(
           id: 100,
           title: "Waktunya Skincare-an! ✨",
-          body: "Yuk, lakukan rutinitas skincare kamu hari ini agar kulit tetap sehat dan terawat!",
+          body:
+              "Yuk, lakukan rutinitas skincare kamu hari ini agar kulit tetap sehat dan terawat!",
           hour: picked.hour,
           minute: picked.minute,
         );
@@ -176,6 +227,105 @@ class _RitualPageState extends State<RitualPage> {
           ),
         );
       }
+
+      // Sinkronisasi perubahan waktu pengingat ke Firestore
+      final currentUser = await _getFirebaseUser();
+      if (currentUser != null) {
+        FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .set({
+              'notificationHour': picked.hour,
+              'notificationMinute': picked.minute,
+            }, SetOptions(merge: true))
+            .catchError(
+              (e) => print("Gagal sync waktu notifikasi ke Firestore: $e"),
+            );
+      }
+    }
+  }
+
+  bool _isSyncing = false;
+
+  Future<void> _syncData() async {
+    final email = PreferencesHandler.email;
+    if (email.isEmpty) return;
+
+    setState(() {
+      _isSyncing = true;
+    });
+
+    try {
+      // 1. Pastikan user terautentikasi ke Firebase Auth
+      var currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser == null) {
+        final password = PreferencesHandler.password;
+        if (password.isNotEmpty) {
+          try {
+            final credential = await FirebaseAuth.instance
+                .signInWithEmailAndPassword(email: email, password: password);
+            currentUser = credential.user;
+          } catch (e) {
+            print("Auto login ke Firebase Auth gagal: $e");
+          }
+        }
+      }
+
+      if (currentUser == null) {
+        print("Sinkronisasi dibatalkan: Pengguna belum terautentikasi.");
+        return;
+      }
+
+      // 2. Sinkronisasi daftar ritual (SQLite <=> Firestore)
+      final localRituals = await DBHelper().getRitualsByEmail(email);
+      final remoteRituals = await FirebaseDBHelper().getRitualsByEmail(email);
+
+      final localMap = {for (var r in localRituals) r.id: r};
+      final remoteMap = {for (var r in remoteRituals) r.id: r};
+
+      // Sync dari remote ke lokal (SQLite)
+      for (var remoteRitual in remoteRituals) {
+        final localRitual = localMap[remoteRitual.id];
+        if (localRitual == null) {
+          await DBHelper().insertRitual(remoteRitual);
+        } else {
+          // Jika ada perbedaan isi, perbarui data lokal
+          if (localRitual.title != remoteRitual.title ||
+              localRitual.subtitle != remoteRitual.subtitle ||
+              localRitual.createdAt != remoteRitual.createdAt ||
+              localRitual.deletedAt != remoteRitual.deletedAt) {
+            await DBHelper().updateRitual(remoteRitual);
+          }
+        }
+      }
+
+      // Sync dari lokal ke remote (Firestore)
+      for (var localRitual in localRituals) {
+        if (!remoteMap.containsKey(localRitual.id)) {
+          await FirebaseDBHelper().insertRitual(localRitual);
+        }
+      }
+
+      // 3. Sinkronisasi checklist status harian ke SharedPreferences
+      final snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .collection('step_statuses')
+          .get();
+
+      for (var doc in snapshot.docs) {
+        final String key = doc.id;
+        final bool isDone = doc.data()['isDone'] ?? false;
+        await PreferencesHandler.saveStepStatus(key, isDone);
+      }
+    } catch (e) {
+      print("Error syncing with Firebase: $e");
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSyncing = false;
+        });
+      }
     }
   }
 
@@ -185,6 +335,13 @@ class _RitualPageState extends State<RitualPage> {
     loadRituals();
     _loadNotificationSettings();
     _scrollController = ScrollController(initialScrollOffset: 840.0);
+
+    // Jalankan sync di background saat halaman dimuat
+    _syncData().then((_) {
+      if (mounted) {
+        loadRituals();
+      }
+    });
   }
 
   @override
@@ -226,15 +383,20 @@ class _RitualPageState extends State<RitualPage> {
             ),
             ElevatedButton(
               onPressed: () async {
-                await DBHelper().updateRitual(
-                  RitualModel(
-                    id: ritual.id,
-                    title: titleController.text,
-                    subtitle: subtitleController.text,
-                    isDone: ritual.isDone,
-                    ownerEmail: ritual.ownerEmail,
-                  ),
+                final updatedRitual = RitualModel(
+                  id: ritual.id,
+                  title: titleController.text,
+                  subtitle: subtitleController.text,
+                  isDone: ritual.isDone,
+                  ownerEmail: ritual.ownerEmail,
+                  createdAt: ritual.createdAt,
+                  deletedAt: ritual.deletedAt,
                 );
+
+                await DBHelper().updateRitual(updatedRitual);
+
+                // Simpan ke Firestore
+                await FirebaseDBHelper().updateRitual(updatedRitual);
 
                 await loadRituals();
 
@@ -253,86 +415,137 @@ class _RitualPageState extends State<RitualPage> {
   //  fungsi buat nambah  skincare
   void _showAddSkincareDialog() {
     if (_isPastDate) return;
+    String selectedType = "Facewash"; // Nilai default
+
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text(
-            "Tambah Skincare Baru",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF436155),
-            ),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min, // Biar tinggi pop-up nyesuaian isi
-            children: [
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: "Nama Produk (cth: Hydrating Toner)",
-                  hintText: "Masukkan nama produk...",
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: const Text(
+                "Tambah Skincare Baru",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF436155),
                 ),
               ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: _subtitleController,
-                decoration: const InputDecoration(
-                  labelText: "Keterangan/Kandungan (cth: Hyaluronic Acid)",
-                  hintText: "Masukkan keterangan...",
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                _titleController.clear();
-                _subtitleController.clear();
-                Navigator.pop(context);
-              },
-              child: const Text("Batal", style: TextStyle(color: Colors.grey)),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (_titleController.text.isNotEmpty) {
-                  final String dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                  await DBHelper().insertRitual(
-                    RitualModel(
-                      title: _titleController.text,
-                      subtitle: _subtitleController.text.isEmpty
-                          ? "Custom Product"
-                          : _subtitleController.text,
-                      isDone: false,
-                      ownerEmail: PreferencesHandler.email,
-                      createdAt: dateKey,
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min, // Biar tinggi pop-up nyesuaian isi
+                  children: [
+                    DropdownButtonFormField<String>(
+                      initialValue: selectedType,
+                      decoration: const InputDecoration(
+                        labelText: "Jenis Skincare",
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF436155)),
+                        ),
+                      ),
+                      dropdownColor: Colors.white,
+                      items: const [
+                        DropdownMenuItem(value: "Facewash", child: Text("Facewash")),
+                        DropdownMenuItem(value: "Sunscreen", child: Text("Sunscreen")),
+                        DropdownMenuItem(value: "Toner", child: Text("Toner")),
+                        DropdownMenuItem(value: "Cleanser", child: Text("Cleanser")),
+                        DropdownMenuItem(value: "Serum", child: Text("Serum")),
+                      ],
+                      onChanged: (value) {
+                        if (value != null) {
+                          setDialogState(() {
+                            selectedType = value;
+                          });
+                        }
+                      },
                     ),
-                  );
-
-                  _titleController.clear();
-                  _subtitleController.clear();
-
-                  await loadRituals();
-
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                  }
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF436155),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _titleController,
+                      decoration: const InputDecoration(
+                        labelText: "Nama Produk (cth: Hydrating Toner)",
+                        hintText: "Masukkan nama produk...",
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF436155)),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller: _subtitleController,
+                      decoration: const InputDecoration(
+                        labelText: "Kandungan (cth: Hyaluronic Acid)",
+                        hintText: "Masukkan kandungan...",
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Color(0xFF436155)),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              child: const Text("Tambah"),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    _titleController.clear();
+                    _subtitleController.clear();
+                    Navigator.pop(context);
+                  },
+                  child: const Text("Batal", style: TextStyle(color: Colors.grey)),
+                ),
+                ElevatedButton(
+                  onPressed: () async {
+                    if (_titleController.text.isNotEmpty || selectedType.isNotEmpty) {
+                      final String dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
+                      
+                      // Jika nama produk kosong, gunakan jenis skincare sebagai judul utama
+                      final String finalTitle = _titleController.text.isEmpty
+                          ? selectedType
+                          : _titleController.text;
+
+                      // Gabungkan jenis skincare dan kandungan untuk subtitle agar terstruktur
+                      final String finalSubtitle = _subtitleController.text.isEmpty
+                          ? selectedType
+                          : "$selectedType - ${_subtitleController.text}";
+
+                      final newRitual = RitualModel(
+                        title: finalTitle,
+                        subtitle: finalSubtitle,
+                        isDone: false,
+                        ownerEmail: PreferencesHandler.email,
+                        createdAt: dateKey,
+                      );
+                      final int localId = await DBHelper().insertRitual(newRitual);
+                      newRitual.id = localId;
+
+                      // Sinkronisasi data ke Firestore
+                      await FirebaseDBHelper().insertRitual(newRitual);
+
+                      _titleController.clear();
+                      _subtitleController.clear();
+
+                      await loadRituals();
+
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF436155),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text("Tambah"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -345,7 +558,8 @@ class _RitualPageState extends State<RitualPage> {
     //     : (jumlahDicentang / rituals.length) * 100;
 
     DateTime hariIni = DateTime.now();
-    String tanggalDiformat = "${DateFormat('EEEE, MMMM d').format(_selectedDate)}th";
+    String tanggalDiformat =
+        "${DateFormat('EEEE, MMMM d').format(_selectedDate)}th";
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5FAFD),
@@ -355,13 +569,42 @@ class _RitualPageState extends State<RitualPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                "Rutinitas Skincare",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Rutinitas Skincare",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  _isSyncing
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Color(0xFF436155),
+                            ),
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(
+                            Icons.sync,
+                            color: Color(0xFF436155),
+                            size: 20,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () async {
+                            await _syncData();
+                            await loadRituals();
+                          },
+                        ),
+                ],
               ),
               const SizedBox(height: 4),
               Text(
@@ -381,7 +624,9 @@ class _RitualPageState extends State<RitualPage> {
                     DateTime targetTanggal = hariIni.add(
                       Duration(days: index - 15),
                     );
-                    String namaHari = DateFormat('E').format(targetTanggal).toUpperCase();
+                    String namaHari = DateFormat(
+                      'E',
+                    ).format(targetTanggal).toUpperCase();
                     String angkaTanggal = DateFormat('d').format(targetTanggal);
 
                     bool isActive =
@@ -422,7 +667,10 @@ class _RitualPageState extends State<RitualPage> {
 
               // Pengingat Rutinitas Card
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(24),
@@ -529,13 +777,13 @@ class _RitualPageState extends State<RitualPage> {
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                 Text(
-                                   "${rituals.where((e) => e.isDone).length} of ${rituals.length} steps",
-                                   style: const TextStyle(
-                                     fontSize: 12,
-                                     color: Colors.grey,
-                                   ),
-                                 ),
+                                Text(
+                                  "${rituals.where((e) => e.isDone).length} of ${rituals.length} steps",
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
@@ -562,8 +810,18 @@ class _RitualPageState extends State<RitualPage> {
                           onLongPress: _isPastDate
                               ? null
                               : () async {
-                                  final String dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                                  await DBHelper().softDeleteRitual(ritual.id!, dateKey);
+                                  final String dateKey = DateFormat(
+                                    'yyyy-MM-dd',
+                                  ).format(_selectedDate);
+                                  await DBHelper().softDeleteRitual(
+                                    ritual.id!,
+                                    dateKey,
+                                  );
+
+                                  // Sinkronisasi soft delete ke Firestore
+                                  ritual.deletedAt = dateKey;
+                                  await FirebaseDBHelper().updateRitual(ritual);
+
                                   await loadRituals();
                                 },
 
@@ -573,36 +831,72 @@ class _RitualPageState extends State<RitualPage> {
                             stepNumber: "Step $nomorUrut",
                             isDone: ritual.isDone,
 
-                             onTap: () async {
-                               if (_isPastDate) {
-                                 ScaffoldMessenger.of(context).showSnackBar(
-                                   const SnackBar(
-                                     content: Text("Riwayat hari sebelumnya tidak dapat diubah."),
-                                     backgroundColor: Colors.red,
-                                   ),
-                                 );
-                                 return;
-                               }
-                               final String dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                               final String key = "${dateKey}_${ritual.id}";
-                               final bool newStatus = !ritual.isDone;
+                            onTap: () async {
+                              if (_isPastDate) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Riwayat hari sebelumnya tidak dapat diubah.",
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+                              final String dateKey = DateFormat(
+                                'yyyy-MM-dd',
+                              ).format(_selectedDate);
+                              final String key = "${dateKey}_${ritual.id}";
+                              final bool newStatus = !ritual.isDone;
 
-                               await PreferencesHandler.saveStepStatus(key, newStatus);
-                               
-                               // Kita juga update di database untuk keselarasan status umum/offline
-                               await DBHelper().updateRitualStatus(
-                                 ritual.id!,
-                                 newStatus,
-                               );
+                              await PreferencesHandler.saveStepStatus(
+                                key,
+                                newStatus,
+                              );
 
-                               await loadRituals();
-                             },
+                              // Kita juga update di database untuk keselarasan status umum/offline
+                              await DBHelper().updateRitualStatus(
+                                ritual.id!,
+                                newStatus,
+                              );
+
+                              // Sinkronisasi status checklist harian ke Firestore
+                              final currentUser =
+                                  FirebaseAuth.instance.currentUser;
+                              if (currentUser != null) {
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(currentUser.uid)
+                                    .collection('step_statuses')
+                                    .doc(key)
+                                    .set({'isDone': newStatus})
+                                    .catchError(
+                                      (e) => print(
+                                        "Error sync status harian ke Firestore: $e",
+                                      ),
+                                    );
+                              }
+
+                              await loadRituals();
+                            },
 
                             onDelete: _isPastDate
                                 ? null
                                 : () async {
-                                    final String dateKey = DateFormat('yyyy-MM-dd').format(_selectedDate);
-                                    await DBHelper().softDeleteRitual(ritual.id!, dateKey);
+                                    final String dateKey = DateFormat(
+                                      'yyyy-MM-dd',
+                                    ).format(_selectedDate);
+                                    await DBHelper().softDeleteRitual(
+                                      ritual.id!,
+                                      dateKey,
+                                    );
+
+                                    // Sinkronisasi soft delete ke Firestore
+                                    ritual.deletedAt = dateKey;
+                                    await FirebaseDBHelper().updateRitual(
+                                      ritual,
+                                    );
+
                                     await loadRituals();
                                   },
 

@@ -30,7 +30,6 @@ class FirebaseAuthService {
           uid: user.uid,
           nama: nama,
           email: email,
-          password: password,
           createdAt: DateTime.now(),
         );
 

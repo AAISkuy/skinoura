@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:skinoura/models/ritual_model.dart';
 import 'package:skinoura/models/user_model_firebase.dart';
 
@@ -20,7 +21,7 @@ class FirebaseDBHelper {
       final docId = pengguna.uid ?? _firestore.collection('users').doc().id;
       final userToSave = pengguna.uid == null ? pengguna.copyWith(uid: docId) : pengguna;
       
-      await _firestore.collection('users').doc(docId).set(userToSave.toMap());
+      await _firestore.collection('users').doc(docId).set(userToSave.toMap(), SetOptions(merge: true));
       return true;
     } catch (e) {
       log('FirebaseDBHelper registerUser error: $e');
@@ -76,7 +77,7 @@ class FirebaseDBHelper {
       await _firestore
           .collection('users')
           .doc(pengguna.uid)
-          .update(pengguna.toMap());
+          .set(pengguna.toMap(), SetOptions(merge: true));
       return true;
     } catch (e) {
       log('FirebaseDBHelper updateUser error: $e');
@@ -89,14 +90,19 @@ class FirebaseDBHelper {
   // Menambah ritual baru ke Cloud Firestore
   Future<bool> insertRitual(RitualModel ritual) async {
     try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return false;
+
       // Jika id ritual kosong, generate unik berbasis timestamp int
       int id = ritual.id ?? DateTime.now().millisecondsSinceEpoch;
       ritual.id = id;
 
       await _firestore
+          .collection('users')
+          .doc(uid)
           .collection('rituals')
           .doc(id.toString())
-          .set(ritual.toMap());
+          .set(ritual.toMap(), SetOptions(merge: true));
       return true;
     } catch (e) {
       log('FirebaseDBHelper insertRitual error: $e');
@@ -107,9 +113,13 @@ class FirebaseDBHelper {
   // Mengambil semua ritual milik user tertentu berdasarkan email
   Future<List<RitualModel>> getRitualsByEmail(String email) async {
     try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return [];
+
       final querySnapshot = await _firestore
+          .collection('users')
+          .doc(uid)
           .collection('rituals')
-          .where('ownerEmail', isEqualTo: email)
           .get();
 
       return querySnapshot.docs.map((doc) {
@@ -128,7 +138,12 @@ class FirebaseDBHelper {
   // Memperbarui status selesai/tidak dari ritual (isDone)
   Future<bool> updateRitualStatus(int id, bool isDone) async {
     try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return false;
+
       await _firestore
+          .collection('users')
+          .doc(uid)
           .collection('rituals')
           .doc(id.toString())
           .update({'isDone': isDone ? 1 : 0});
@@ -143,10 +158,15 @@ class FirebaseDBHelper {
   Future<bool> updateRitual(RitualModel ritual) async {
     try {
       if (ritual.id == null) return false;
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return false;
+
       await _firestore
+          .collection('users')
+          .doc(uid)
           .collection('rituals')
           .doc(ritual.id.toString())
-          .update(ritual.toMap());
+          .set(ritual.toMap(), SetOptions(merge: true));
       return true;
     } catch (e) {
       log('FirebaseDBHelper updateRitual error: $e');
@@ -157,7 +177,15 @@ class FirebaseDBHelper {
   // Menghapus ritual berdasarkan id integer
   Future<bool> deleteRitual(int id) async {
     try {
-      await _firestore.collection('rituals').doc(id.toString()).delete();
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) return false;
+
+      await _firestore
+          .collection('users')
+          .doc(uid)
+          .collection('rituals')
+          .doc(id.toString())
+          .delete();
       return true;
     } catch (e) {
       log('FirebaseDBHelper deleteRitual error: $e');

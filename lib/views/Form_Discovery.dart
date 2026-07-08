@@ -144,7 +144,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                         children: PreferencesHandler.recommendedIngredients
                             .map(
                               (ingredient) => GestureDetector(
-                                onTap: () => selectRecommendedIngredient(ingredient),
+                                onTap: () =>
+                                    selectRecommendedIngredient(ingredient),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 12,
@@ -154,7 +155,9 @@ class _DiscoverPageState extends State<DiscoverPage> {
                                     color: const Color(0xFFEAF4EF),
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                      color: const Color(0xFF436155).withOpacity(0.15),
+                                      color: const Color(
+                                        0xFF436155,
+                                      ).withOpacity(0.15),
                                     ),
                                   ),
                                   child: Text(
@@ -190,6 +193,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
                   ElevatedButton(
                     onPressed: analyzeIngredient,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Color(0xFF436155),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
                     child: const Text("Analyze"),
                   ),
                 ],
@@ -225,7 +235,7 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               decoration: BoxDecoration(
                                 color: getSafetyColor(
                                   selectedIngredient!.safety,
-                                ).withOpacity(0.2),
+                                ).withValues(alpha: 0.2),
                                 borderRadius: BorderRadius.circular(20),
                               ),
                               child: Text(
@@ -254,6 +264,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
                         LinearProgressIndicator(
                           value: selectedIngredient!.comedogenicity / 5,
+                          backgroundColor: Colors.red.shade100,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            Colors.redAccent,
+                          ),
                         ),
 
                         const SizedBox(height: 20),
@@ -266,6 +280,10 @@ class _DiscoverPageState extends State<DiscoverPage> {
 
                         LinearProgressIndicator(
                           value: selectedIngredient!.irritationRisk / 5,
+                          backgroundColor: Colors.red.shade100,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            Colors.redAccent,
+                          ),
                         ),
 
                         const SizedBox(height: 20),

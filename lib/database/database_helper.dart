@@ -26,10 +26,10 @@ class DBHelper {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, version) async {
         await db.execute('''
-        CREATE TABLE users(
+        CREATE TABLE IF NOT EXISTS users(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           nama TEXT,
           email TEXT UNIQUE,
@@ -38,7 +38,7 @@ class DBHelper {
       ''');
 
         await db.execute('''
-        CREATE TABLE rituals(
+        CREATE TABLE IF NOT EXISTS rituals(
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           title TEXT,
           subtitle TEXT,
@@ -50,6 +50,28 @@ class DBHelper {
       ''');
       },
       onUpgrade: (db, oldVersion, newVersion) async {
+        // Buat tabel jika belum terbuat di versi database lama
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS users(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          nama TEXT,
+          email TEXT UNIQUE,
+          password TEXT
+        )
+      ''');
+
+        await db.execute('''
+        CREATE TABLE IF NOT EXISTS rituals(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          subtitle TEXT,
+          isDone INTEGER DEFAULT 0,
+          ownerEmail TEXT,
+          createdAt TEXT,
+          deletedAt TEXT
+        )
+      ''');
+
         if (oldVersion < 3) {
           try {
             await db.execute("ALTER TABLE rituals ADD COLUMN createdAt TEXT");

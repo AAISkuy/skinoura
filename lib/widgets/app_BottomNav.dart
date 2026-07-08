@@ -91,8 +91,28 @@ class _AppBottomNav extends State<AppBottomnav> {
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: CircleAvatar(
-                backgroundImage: _getProfileImage(),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF7C9A92),
+                    width: 1.5,
+                  ),
+                ),
+                child: CircleAvatar(
+                  radius: 18,
+                  backgroundColor: const Color(0xFFE2ECE9),
+                  backgroundImage: PreferencesHandler.profilePicture.isNotEmpty
+                      ? _getProfileImage()
+                      : null,
+                  child: PreferencesHandler.profilePicture.isEmpty
+                      ? const Icon(
+                          Icons.person,
+                          size: 20,
+                          color: Color(0xFF7C9A92),
+                        )
+                      : null,
+                ),
               ),
             ),
           ),

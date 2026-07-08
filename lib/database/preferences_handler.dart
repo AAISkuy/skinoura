@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class PreferencesHandler {
   static late SharedPreferences _prefs;
@@ -117,6 +118,11 @@ class PreferencesHandler {
     await _prefs.remove(_keyNotificationHour);
     await _prefs.remove(_keyNotificationMinute);
     await _prefs.remove(_keyProfilePicture);
+    try {
+      await FirebaseAuth.instance.signOut();
+    } catch (e) {
+      print("Error signing out of Firebase Auth: $e");
+    }
   }
 
   static Future<void> saveStepStatus(String key, bool isDone) async {
