@@ -28,15 +28,39 @@ class _QuizPageState extends State<QuizPage> {
       "Kering": 0,
       "Kombinasi": 0,
       "Sensitif": 0,
+      "Normal": 0,
     };
 
     Set<String> collectedIngredients = {};
 
     for (var jawaban in _selectedAnswers) {
-      if (scoreSkinType.containsKey(jawaban.skinType)) {
-        scoreSkinType[jawaban.skinType] = scoreSkinType[jawaban.skinType]! + 1;
+      // Petakan skinType bahasa Inggris ke bahasa Indonesia agar sesuai dengan map scoreSkinType
+      String skinTypeIndo = "";
+      switch (jawaban.skinType) {
+        case "Oily":
+          skinTypeIndo = "Berminyak";
+          break;
+        case "Dry":
+          skinTypeIndo = "Kering";
+          break;
+        case "Combination":
+          skinTypeIndo = "Kombinasi";
+          break;
+        case "Sensitive":
+        case "Sensitif":
+          skinTypeIndo = "Sensitif";
+          break;
+        case "Normal":
+          skinTypeIndo = "Normal";
+          break;
+        default:
+          skinTypeIndo = jawaban.skinType;
       }
-      if (jawaban.skinType == "Sensitif") {
+
+      if (scoreSkinType.containsKey(skinTypeIndo)) {
+        scoreSkinType[skinTypeIndo] = scoreSkinType[skinTypeIndo]! + 1;
+      }
+      if (skinTypeIndo == "Sensitif") {
         scoreSkinType["Sensitif"] = scoreSkinType["Sensitif"]! + 2;
       }
       collectedIngredients.addAll(jawaban.recommendedIngredients);
@@ -109,16 +133,14 @@ class _QuizPageState extends State<QuizPage> {
     double progressPercent = (_currentIndex + 1) / _questions.length;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FAFD),
       appBar: AppBar(
         title: const Text(
           'Skin Type Quiz',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -135,7 +157,6 @@ class _QuizPageState extends State<QuizPage> {
                   "Pertanyaan ${_currentIndex + 1} dari ${_questions.length}",
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
-                    color: Colors.black54,
                   ),
                 ),
                 Text(
@@ -152,7 +173,7 @@ class _QuizPageState extends State<QuizPage> {
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
                 value: progressPercent,
-                backgroundColor: Colors.black,
+                backgroundColor: Theme.of(context).disabledColor.withOpacity(0.2),
                 valueColor: const AlwaysStoppedAnimation<Color>(
                   Color(0xFF436155),
                 ),
@@ -167,7 +188,6 @@ class _QuizPageState extends State<QuizPage> {
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
                 height: 1.4,
               ),
             ),
@@ -183,9 +203,9 @@ class _QuizPageState extends State<QuizPage> {
                       onPressed: () => _nextQuestion(option),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.all(18),
-                        backgroundColor: Colors.white,
-                        side: const BorderSide(
-                          color: Color(0xFFE2E8F0),
+                        backgroundColor: Theme.of(context).cardColor,
+                        side: BorderSide(
+                          color: Theme.of(context).dividerColor,
                           width: 1.5,
                         ),
                         shape: RoundedRectangleBorder(
@@ -198,7 +218,6 @@ class _QuizPageState extends State<QuizPage> {
                           option.optionText,
                           style: const TextStyle(
                             fontSize: 15,
-                            color: Colors.black,
                             fontWeight: FontWeight.w500,
                             height: 1.3,
                           ),

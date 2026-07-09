@@ -18,36 +18,43 @@ class CalendarDayCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     // Tentukan warna latar belakang
-    Color backgroundColor = Colors.white;
+    Color backgroundColor = Theme.of(context).cardColor;
     if (isActive) {
       backgroundColor = const Color(0xFF436155);
     } else if (isToday) {
-      backgroundColor = const Color(0xFFE2ECE9); // Hijau muda soft untuk menandakan hari ini
+      backgroundColor = isDark ? const Color(0xFF1B2D26) : const Color(0xFFE2ECE9);
     }
 
     // Tentukan border
-    Border border = Border.all(color: Colors.grey.withOpacity(0.15));
+    Border border = Border.all(
+      color: isDark ? Colors.white.withOpacity(0.08) : Colors.grey.withOpacity(0.15),
+    );
     if (isActive) {
       border = Border.all(color: Colors.transparent);
     } else if (isToday) {
-      border = Border.all(color: const Color(0xFF436155).withOpacity(0.3), width: 1.5);
+      border = Border.all(
+        color: isDark ? const Color(0xFF7C9A92).withOpacity(0.4) : const Color(0xFF436155).withOpacity(0.3),
+        width: 1.5,
+      );
     }
 
     // Tentukan warna teks hari
-    Color dayTextColor = Colors.grey;
+    Color dayTextColor = isDark ? Colors.grey[400]! : Colors.grey;
     if (isActive) {
       dayTextColor = Colors.white70;
     } else if (isToday) {
-      dayTextColor = const Color(0xFF436155);
+      dayTextColor = isDark ? const Color(0xFF7C9A92) : const Color(0xFF436155);
     }
 
     // Tentukan warna teks tanggal
-    Color dateTextColor = Colors.black87;
+    Color dateTextColor = Theme.of(context).textTheme.bodyLarge?.color ?? (isDark ? Colors.white : Colors.black87);
     if (isActive) {
       dateTextColor = Colors.white;
     } else if (isToday) {
-      dateTextColor = const Color(0xFF436155);
+      dateTextColor = isDark ? const Color(0xFF7C9A92) : const Color(0xFF436155);
     }
 
     return Container(

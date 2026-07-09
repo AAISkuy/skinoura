@@ -13,33 +13,6 @@ class DiscoverPage extends StatefulWidget {
 }
 
 class _DiscoverPageState extends State<DiscoverPage> {
-  // String? selectedProduct;
-  // String? selectedSkinType;
-  // String? selectedCategory = "Semua";
-  // final categories = [
-  //   "Semua",
-  //   "Face Wash",
-  //   "Serum",
-  //   "Moisturizer",
-  //   "Sunscreen",
-  // ];
-  // List<ProductModel> get filteredProducts {
-  //   return Productlist.where((product) {
-  //     final matchCategory =
-  //         selectedCategory == "Semua" || product.category == selectedCategory;
-
-  //     final matchIngredient =
-  //         selectedIngredient == null ||
-  //         product.ingredients.contains(selectedIngredient);
-
-  //     final matchSkinType =
-  //         selectedSkinType == null ||
-  //         product.skinTypes.contains(selectedSkinType);
-
-  //     return matchCategory && matchIngredient && matchSkinType;
-  //   }).toList();
-  // }
-
   final TextEditingController searchController = TextEditingController();
 
   Ingredient? selectedIngredient;
@@ -97,7 +70,6 @@ class _DiscoverPageState extends State<DiscoverPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FAFD),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: SingleChildScrollView(
@@ -108,8 +80,13 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.06)
+                          : Colors.black.withOpacity(0.02),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.03),
@@ -146,28 +123,33 @@ class _DiscoverPageState extends State<DiscoverPage> {
                               (ingredient) => GestureDetector(
                                 onTap: () =>
                                     selectRecommendedIngredient(ingredient),
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 8,
+                                  child: Builder(
+                                    builder: (context) {
+                                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                                      return Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 12,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isDark ? const Color(0xFF313F3B) : const Color(0xFFEAF4EF),
+                                          borderRadius: BorderRadius.circular(20),
+                                          border: Border.all(
+                                            color: isDark
+                                                ? const Color(0xFF7C9A92).withOpacity(0.3)
+                                                : const Color(0xFF436155).withOpacity(0.15),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          ingredient,
+                                          style: TextStyle(
+                                            color: isDark ? const Color(0xFF7C9A92) : const Color(0xFF436155),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      );
+                                    }
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFEAF4EF),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: const Color(
-                                        0xFF436155,
-                                      ).withOpacity(0.15),
-                                    ),
-                                  ),
-                                  child: Text(
-                                    ingredient,
-                                    style: const TextStyle(
-                                      color: Color(0xFF436155),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
                               ),
                             )
                             .toList(),
@@ -194,8 +176,8 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   ElevatedButton(
                     onPressed: analyzeIngredient,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: Color(0xFF436155),
+                      backgroundColor: Theme.of(context).cardColor,
+                      foregroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -208,7 +190,16 @@ class _DiscoverPageState extends State<DiscoverPage> {
               const SizedBox(height: 30),
 
               if (selectedIngredient != null)
-                Card(
+                Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.06)
+                          : Colors.black.withOpacity(0.02),
+                    ),
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(

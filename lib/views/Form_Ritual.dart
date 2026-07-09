@@ -373,7 +373,7 @@ class _RitualPageState extends State<RitualPage> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              backgroundColor: Colors.white,
+              backgroundColor: Theme.of(context).cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
@@ -396,7 +396,7 @@ class _RitualPageState extends State<RitualPage> {
                           borderSide: BorderSide(color: Color(0xFF436155)),
                         ),
                       ),
-                      dropdownColor: Colors.white,
+                      dropdownColor: Theme.of(context).cardColor,
                       items: const [
                         DropdownMenuItem(value: "Facewash", child: Text("Facewash")),
                         DropdownMenuItem(value: "Sunscreen", child: Text("Sunscreen")),
@@ -512,7 +512,6 @@ class _RitualPageState extends State<RitualPage> {
         "${DateFormat('EEEE, MMMM d').format(_selectedDate)}th";
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FAFD),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -527,24 +526,27 @@ class _RitualPageState extends State<RitualPage> {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
                     ),
                   ),
                   _isSyncing
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 14,
                           height: 14,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              Color(0xFF436155),
+                              Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF7C9A92)
+                                  : const Color(0xFF436155),
                             ),
                           ),
                         )
                       : IconButton(
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.sync,
-                            color: Color(0xFF436155),
+                            color: Theme.of(context).brightness == Brightness.dark
+                                ? const Color(0xFF7C9A92)
+                                : const Color(0xFF436155),
                             size: 20,
                           ),
                           padding: EdgeInsets.zero,
@@ -622,8 +624,13 @@ class _RitualPageState extends State<RitualPage> {
                   vertical: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white.withOpacity(0.06)
+                        : Colors.black.withOpacity(0.02),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.black.withOpacity(0.02),
@@ -637,12 +644,16 @@ class _RitualPageState extends State<RitualPage> {
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFE2ECE9),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF313F3B)
+                            : const Color(0xFFE2ECE9),
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.notifications_active_outlined,
-                        color: Color(0xFF436155),
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? const Color(0xFF7C9A92)
+                            : const Color(0xFF436155),
                         size: 24,
                       ),
                     ),
@@ -656,7 +667,6 @@ class _RitualPageState extends State<RitualPage> {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black87,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -701,8 +711,13 @@ class _RitualPageState extends State<RitualPage> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white.withOpacity(0.06)
+                        : Colors.black.withOpacity(0.02),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

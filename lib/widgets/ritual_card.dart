@@ -22,11 +22,15 @@ class RitualStepCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.06) : Colors.black.withOpacity(0.02),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.01),
@@ -52,7 +56,9 @@ class RitualStepCard extends StatelessWidget {
                   // Icon Checkbox (Kiri) - Berubah warna & icon kalau dicentang
                   Icon(
                     isDone ? Icons.check_circle : Icons.radio_button_unchecked,
-                    color: isDone ? const Color(0xFF436155) : Colors.grey,
+                    color: isDone
+                        ? (isDark ? const Color(0xFF7C9A92) : const Color(0xFF436155))
+                        : Colors.grey,
                     size: 26,
                   ),
                   const SizedBox(width: 14),
@@ -70,7 +76,7 @@ class RitualStepCard extends StatelessWidget {
                             decoration: isDone
                                 ? TextDecoration.lineThrough
                                 : null,
-                            color: isDone ? Colors.grey : Colors.black87,
+                            color: isDone ? Colors.grey : Theme.of(context).textTheme.bodyLarge?.color,
                           ),
                         ),
                         const SizedBox(height: 4),

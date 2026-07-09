@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
+import 'package:skinoura/theme/theme_color.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -42,10 +43,8 @@ class _ProfilePageState extends State<ProfilePage> {
         final bytes = await image.readAsBytes();
         final String base64Str = base64Encode(bytes);
 
-        // Simpan lokal
         await PreferencesHandler.saveProfilePicture(base64Str);
 
-        // Unggah ke Firestore (tanpa await agar respons UI instan)
         final currentUser = FirebaseAuth.instance.currentUser;
         if (currentUser != null) {
           FirebaseFirestore.instance
@@ -179,7 +178,6 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () async {
                 final String newName = nameController.text.trim();
                 if (newName.isNotEmpty) {
-                  // 1. Simpan ke lokal
                   await PreferencesHandler.saveUser(
                     nama: newName,
                     email: PreferencesHandler.email,
@@ -187,7 +185,6 @@ class _ProfilePageState extends State<ProfilePage> {
                     profilePicture: PreferencesHandler.profilePicture,
                   );
 
-                  // 2. Unggah ke Firestore (tanpa await agar UI langsung tertutup dan update seketika)
                   final currentUser = FirebaseAuth.instance.currentUser;
                   if (currentUser != null) {
                     FirebaseFirestore.instance
@@ -223,17 +220,18 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FAFD),
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF5FAFD),
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          icon: Icon(Icons.arrow_back, color: Theme.of(context).iconTheme.color),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Profil',
-          style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).textTheme.titleLarge?.color,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         centerTitle: true,
       ),
@@ -246,7 +244,7 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -270,8 +268,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           ), // Jarak border ke foto
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            gradient: const LinearGradient(
-                              colors: [Color(0xFF7C9A92), Color(0xFF436155)],
+                            gradient: LinearGradient(
+                              colors: [ThemeColor.primaryColor, Color(0xFF436155)],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),
@@ -294,14 +292,15 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: CircleAvatar(
                               radius: 46,
                               backgroundColor: const Color(0xFFE2ECE9),
-                              backgroundImage: PreferencesHandler.profilePicture.isNotEmpty
+                              backgroundImage:
+                                  PreferencesHandler.profilePicture.isNotEmpty
                                   ? _getProfileImage()
                                   : null,
                               child: PreferencesHandler.profilePicture.isEmpty
-                                  ? const Icon(
+                                  ? Icon(
                                       Icons.person,
                                       size: 46,
-                                      color: Color(0xFF7C9A92),
+                                      color: ThemeColor.primaryColor,
                                     )
                                   : null,
                             ),
@@ -363,7 +362,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   const SizedBox(height: 10),
 
                   Text(
-                    'Skin Type: ${PreferencesHandler.skinType}',
+                    'Tipe kulit kamu: ${PreferencesHandler.skinType}',
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -389,7 +388,7 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -409,30 +408,32 @@ class _ProfilePageState extends State<ProfilePage> {
                       vertical: 4,
                     ),
                     leading: CircleAvatar(
-                      backgroundColor: const Color(0xFFF5F5F5),
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                       radius: 22,
                       child: Icon(
-                        Icons.settings_outlined,
+                        Icons.palette_outlined,
                         color: Colors.grey[700],
                       ),
                     ),
                     title: const Text(
-                      "Preferences",
+                      "Ubah Tema",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black,
                       ),
                     ),
                     subtitle: const Text(
-                      "Tema dan Bahasa",
+                      "Ganti tema warna aplikasi",
                       style: TextStyle(color: Colors.grey, fontSize: 13),
                     ),
-                    trailing: const Icon(
-                      Icons.chevron_right,
-                      color: Colors.blueGrey,
+                    trailing: Switch(
+                      value: ThemeColor.isDarkMode.value,
+                      activeColor: const Color(0xFF7C9A92),
+                      onChanged: (bool value) async {
+                        await ThemeColor.toggleTheme(value);
+                        setState(() {});
+                      },
                     ),
-                    onTap: () {},
                   ),
                   ListTile(
                     contentPadding: const EdgeInsets.symmetric(
@@ -440,7 +441,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       vertical: 4,
                     ),
                     leading: CircleAvatar(
-                      backgroundColor: const Color(0xFFF5F5F5),
+                      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                       radius: 22,
                       child: Icon(
                         Icons.book_online_outlined,
@@ -452,7 +453,6 @@ class _ProfilePageState extends State<ProfilePage> {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: Colors.black,
                       ),
                     ),
                     subtitle: const Text(

@@ -14,21 +14,36 @@ class IndicatorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F7),
+        color: isDark ? const Color(0xFF2E3A35) : const Color(0xFFF1F5F7),
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.02),
+        ),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, color: const Color(0xFF436155), size: 20),
-          const SizedBox(height: 4),
+          Icon(
+            icon,
+            color: isDark ? const Color(0xFF7C9A92) : const Color(0xFF436155),
+            size: 22,
+          ),
+          const SizedBox(height: 6),
           Text(
             value,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 2),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+          ),
         ],
       ),
     );

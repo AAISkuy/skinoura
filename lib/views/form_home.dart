@@ -35,7 +35,6 @@ class _HomepageState extends State<Homepage> {
     try {
       final email = PreferencesHandler.email;
       if (email.isNotEmpty) {
-        // Panggil sinkronisasi background ke Firebase Firestore
         try {
           await FirebaseDBHelper().syncData();
         } catch (e) {
@@ -45,7 +44,6 @@ class _HomepageState extends State<Homepage> {
         final allRituals = await DBHelper().getRitualsByEmail(email);
         final String dateKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-        // Filter out soft-deleted rituals
         final filteredData = allRituals.where((ritual) {
           if (ritual.createdAt == null && ritual.deletedAt == null) return true;
           final bool isCreated =
@@ -57,7 +55,6 @@ class _HomepageState extends State<Homepage> {
           return isCreated && isNotDeleted;
         }).toList();
 
-        // Assign completion status based on SharedPreferences
         for (var ritual in filteredData) {
           final String key = "${dateKey}_${ritual.id}";
           ritual.isDone = PreferencesHandler.getStepStatus(key);
@@ -107,7 +104,6 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FAFD),
       body: RefreshIndicator(
         color: const Color(0xFF436155),
         onRefresh: loadTodayRituals,
@@ -147,8 +143,13 @@ class _HomepageState extends State<Homepage> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white.withOpacity(0.06)
+                          : Colors.black.withOpacity(0.02),
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.02),
@@ -164,12 +165,12 @@ class _HomepageState extends State<Homepage> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Text(
+                          Text(
                             'Rangkuman \nkondisi kulit',
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Theme.of(context).textTheme.titleLarge?.color,
                               height: 1.2,
                             ),
                           ),
@@ -179,13 +180,17 @@ class _HomepageState extends State<Homepage> {
                               vertical: 6,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE2ECE9),
+                              color: Theme.of(context).brightness == Brightness.dark
+                                  ? const Color(0xFF1B2D26)
+                                  : const Color(0xFFE2ECE9),
                               borderRadius: BorderRadius.circular(20),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Update Terbaru',
                               style: TextStyle(
-                                color: Color(0xff436155),
+                                color: Theme.of(context).brightness == Brightness.dark
+                                    ? const Color(0xFF7C9A92)
+                                    : const Color(0xff436155),
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
                               ),
@@ -203,12 +208,14 @@ class _HomepageState extends State<Homepage> {
                       ),
                       const SizedBox(height: 20),
                       _isLoading
-                          ? const Center(
+                          ? Center(
                               child: Padding(
-                                padding: EdgeInsets.all(20.0),
+                                padding: const EdgeInsets.all(20.0),
                                 child: CircularProgressIndicator(
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Color(0xFF436155),
+                                    Theme.of(context).brightness == Brightness.dark
+                                        ? const Color(0xFF7C9A92)
+                                        : const Color(0xFF436155),
                                   ),
                                 ),
                               ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/services/firebase_auth_service.dart';
+import 'package:skinoura/theme/theme_color.dart';
 
 class LamanRegistrasi extends StatefulWidget {
   const LamanRegistrasi({super.key});
@@ -28,11 +29,11 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text(
+          title: Text(
             "Terms and Conditions",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Color(0xFF7C9A92),
+              color: ThemeColor.primaryColor,
             ),
           ),
           content: SizedBox(
@@ -64,10 +65,10 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 "Tutup",
                 style: TextStyle(
-                  color: Color(0xFF7C9A92),
+                  color: ThemeColor.primaryColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -102,9 +103,9 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return const Center(
+        return Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7C9A92)),
+            valueColor: AlwaysStoppedAnimation<Color>(ThemeColor.primaryColor),
           ),
         );
       },
@@ -173,7 +174,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFF6F1EE), Color(0xFF7C9A92)],
+            colors: [Color(0xFFF6F1EE), ThemeColor.primaryColor],
           ),
         ),
 
@@ -213,7 +214,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF7C9A92),
+                        color: ThemeColor.primaryColor,
                       ),
                     ),
 
@@ -229,7 +230,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C9A92),
+                              color: ThemeColor.primaryColor,
                             ),
                           ),
                         ),
@@ -242,13 +243,13 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               hintText: "Nama Anda",
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -271,7 +272,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C9A92),
+                              color: ThemeColor.primaryColor,
                             ),
                           ),
                         ),
@@ -284,13 +285,13 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               hintText: "example@gmail.com",
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -315,7 +316,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C9A92),
+                              color: ThemeColor.primaryColor,
                             ),
                           ),
                         ),
@@ -328,13 +329,13 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               hintText: "Password Anda",
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -360,7 +361,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF7C9A92),
+                              color: ThemeColor.primaryColor,
                             ),
                           ),
                         ),
@@ -372,13 +373,13 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               hintText: "Konfirmasi Password",
                               focusedBorder: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               border: OutlineInputBorder(
                                 borderSide: BorderSide(
-                                  color: Color(0xFF7C9A92),
+                                  color: ThemeColor.primaryColor,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
                               ),
@@ -406,7 +407,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                             children: [
                               Checkbox(
                                 value: _isAgreed,
-                                activeColor: const Color(0xFF7C9A92),
+                                activeColor: ThemeColor.primaryColor,
                                 onChanged: (value) {
                                   setState(() {
                                     _isAgreed = value ?? false;
@@ -424,8 +425,8 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                     children: [
                                       TextSpan(
                                         text: "Terms and Conditions",
-                                        style: const TextStyle(
-                                          color: Color(0xFF7C9A92),
+                                        style: TextStyle(
+                                          color: ThemeColor.primaryColor,
                                           fontWeight: FontWeight.bold,
                                           decoration: TextDecoration.underline,
                                         ),
@@ -484,7 +485,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                               },
 
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFF7C9A92),
+                                backgroundColor: ThemeColor.primaryColor,
                               ),
 
                               child: Text(
@@ -512,7 +513,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                     ),
                                   text: "Log In",
                                   style: TextStyle(
-                                    color: Color(0xFF7C9A92),
+                                    color: ThemeColor.primaryColor,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),

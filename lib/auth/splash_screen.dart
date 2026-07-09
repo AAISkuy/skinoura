@@ -3,6 +3,7 @@ import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/widgets/app_bottomnav.dart';
+import 'package:skinoura/theme/theme_color.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -39,7 +40,7 @@ class Splash_Screen extends State<SplashScreen> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFF6F1EE), Color(0xFF7C9A92)],
+            colors: [Color(0xFFF6F1EE), ThemeColor.primaryColor],
           ),
         ),
 
@@ -74,13 +75,12 @@ class Splash_Screen extends State<SplashScreen> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF7C9A92),
+                    color: ThemeColor.primaryColor,
                   ),
                 ),
-
                 Text(
                   "Your skincare journey begins here.",
-                  style: TextStyle(fontSize: 14, color: Color(0xFF7C9A92)),
+                  style: TextStyle(fontSize: 14, color: ThemeColor.primaryColor),
                 ),
               ],
             ),

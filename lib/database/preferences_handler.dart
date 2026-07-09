@@ -15,6 +15,8 @@ class PreferencesHandler {
   static const _keyPassword = "password";
   static const _keySkinType = "skinType";
   static const _keyIngredients = "recommendedIngredients";
+  static const _keyIsThemePink = "isThemePink"; // Keep old key definition just in case or update to isDarkMode
+  static const _keyIsDarkMode = "isDarkMode";
 
   static Future<void> setLogin(bool isLogin) async {
     await _prefs.setBool(_keyIsLogin, isLogin);
@@ -22,6 +24,22 @@ class PreferencesHandler {
 
   static bool get isLogin {
     return _prefs.getBool(_keyIsLogin) ?? false;
+  }
+
+  static Future<void> setThemePink(bool value) async {
+    await _prefs.setBool(_keyIsThemePink, value);
+  }
+
+  static bool get isThemePink {
+    return _prefs.getBool(_keyIsThemePink) ?? false;
+  }
+
+  static Future<void> setDarkMode(bool value) async {
+    await _prefs.setBool(_keyIsDarkMode, value);
+  }
+
+  static bool get isDarkMode {
+    return _prefs.getBool(_keyIsDarkMode) ?? false;
   }
 
   static const _keyProfilePicture = "profilePicture";

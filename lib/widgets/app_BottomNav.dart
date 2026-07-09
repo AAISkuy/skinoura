@@ -5,6 +5,7 @@ import 'package:skinoura/views/form_discovery.dart';
 import 'package:skinoura/views/form_home.dart';
 import 'package:skinoura/views/form_profile.dart';
 import 'package:skinoura/views/form_ritual.dart';
+import 'package:skinoura/theme/theme_color.dart';
 
 class AppBottomnav extends StatefulWidget {
   const AppBottomnav({super.key});
@@ -69,13 +70,12 @@ class _AppBottomNav extends State<AppBottomnav> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFFF5FAFD),
         title: Text(
           'Careskin+',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF7C9A92),
+            color: ThemeColor.primaryColor,
           ),
         ),
         centerTitle: true,
@@ -95,7 +95,7 @@ class _AppBottomNav extends State<AppBottomnav> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFF7C9A92),
+                    color: ThemeColor.primaryColor,
                     width: 1.5,
                   ),
                 ),
@@ -106,10 +106,10 @@ class _AppBottomNav extends State<AppBottomnav> {
                       ? _getProfileImage()
                       : null,
                   child: PreferencesHandler.profilePicture.isEmpty
-                      ? const Icon(
+                      ? Icon(
                           Icons.person,
                           size: 20,
-                          color: Color(0xFF7C9A92),
+                          color: ThemeColor.primaryColor,
                         )
                       : null,
                 ),
@@ -118,7 +118,7 @@ class _AppBottomNav extends State<AppBottomnav> {
           ),
         ],
       ),
-      backgroundColor: const Color.fromARGB(255, 226, 237, 243),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       body: [
         Homepage(userName: PreferencesHandler.nama),
@@ -128,8 +128,8 @@ class _AppBottomNav extends State<AppBottomnav> {
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
-        backgroundColor: Colors.white,
-        selectedItemColor: Color(0xFF7C9A92),
+        backgroundColor: Theme.of(context).cardColor,
+        selectedItemColor: ThemeColor.primaryColor,
         unselectedItemColor: Colors.blueGrey,
         onTap: _onBottomNavTapped,
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skinoura/theme/theme_color.dart';
 
 class BarChartCard extends StatelessWidget {
   final String day;
@@ -22,7 +23,7 @@ class BarChartCard extends StatelessWidget {
             duration: const Duration(milliseconds: 300),
             height: (percentage / 100) * 60,
             decoration: BoxDecoration(
-              color: const Color(0xFF7C9A92),
+              color: ThemeColor.primaryColor,
               borderRadius: BorderRadius.circular(4),
             ),
           ),
