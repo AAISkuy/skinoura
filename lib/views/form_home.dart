@@ -141,124 +141,121 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ),
               ),
-  
-              const SizedBox(height: 15),
-  
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.02),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-  
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        const Text(
-                          'Rangkuman \nkondisi kulit',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            height: 1.2,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFE2ECE9),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            'Update Terbaru',
+              if (PreferencesHandler.skinType.isNotEmpty) ...[
+                const SizedBox(height: 15),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'Rangkuman \nkondisi kulit',
                             style: TextStyle(
-                              color: Color(0xff436155),
-                              fontSize: 12,
+                              fontSize: 22,
                               fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                              height: 1.2,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Text(
-                      _getSkinConditionSummaryText(),
-                      style: const TextStyle(color: Colors.grey, fontSize: 14),
-                    ),
-  
-                    const SizedBox(height: 20),
-  
-                    _isLoading
-                        ? const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(20.0),
-                              child: CircularProgressIndicator(
-                                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF436155)),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFE2ECE9),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Text(
+                              'Update Terbaru',
+                              style: TextStyle(
+                                color: Color(0xff436155),
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          )
-                        : GridView.count(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            crossAxisSpacing: 12,
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 12,
-                            childAspectRatio: 1.4,
-                            children: [
-                              IndicatorCard(
-                                icon: Icons.opacity,
-                                value: '${(40 + (completionRate * 60).round())}%',
-                                title: 'Hydration',
-                              ),
-                              IndicatorCard(
-                                icon: Icons.shield_outlined,
-                                value: completionRate >= 0.75
-                                    ? 'Strong'
-                                    : completionRate >= 0.5
-                                        ? 'Good'
-                                        : completionRate >= 0.25
-                                            ? 'Average'
-                                            : 'Weak',
-                                title: 'Barrier',
-                              ),
-                              IndicatorCard(
-                                icon: Icons.opacity,
-                                value: completionRate >= 0.75
-                                    ? 'Low'
-                                    : completionRate >= 0.3
-                                        ? 'Moderate'
-                                        : 'High',
-                                title: 'Sensitivity',
-                              ),
-                              IndicatorCard(
-                                icon: Icons.opacity,
-                                value: completionRate >= 0.75
-                                    ? 'Balanced'
-                                    : completionRate >= 0.3
-                                        ? 'Normal'
-                                        : 'Unbalanced',
-                                title: 'Sebum',
-                              ),
-                            ],
                           ),
-                  ],
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        _getSkinConditionSummaryText(),
+                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                      ),
+                      const SizedBox(height: 20),
+                      _isLoading
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(20.0),
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF436155)),
+                                ),
+                              ),
+                            )
+                          : GridView.count(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisSpacing: 12,
+                              crossAxisCount: 2,
+                              mainAxisSpacing: 12,
+                              childAspectRatio: 1.4,
+                              children: [
+                                IndicatorCard(
+                                  icon: Icons.opacity,
+                                  value: '${(40 + (completionRate * 60).round())}%',
+                                  title: 'Hydration',
+                                ),
+                                IndicatorCard(
+                                  icon: Icons.shield_outlined,
+                                  value: completionRate >= 0.75
+                                      ? 'Strong'
+                                      : completionRate >= 0.5
+                                          ? 'Good'
+                                          : completionRate >= 0.25
+                                              ? 'Average'
+                                              : 'Weak',
+                                  title: 'Barrier',
+                                ),
+                                IndicatorCard(
+                                  icon: Icons.opacity,
+                                  value: completionRate >= 0.75
+                                      ? 'Low'
+                                      : completionRate >= 0.3
+                                          ? 'Moderate'
+                                          : 'High',
+                                  title: 'Sensitivity',
+                                ),
+                                IndicatorCard(
+                                  icon: Icons.opacity,
+                                  value: completionRate >= 0.75
+                                      ? 'Balanced'
+                                      : completionRate >= 0.3
+                                          ? 'Normal'
+                                          : 'Unbalanced',
+                                  title: 'Sebum',
+                                ),
+                              ],
+                            ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 20),
+              ],
   
               Container(
                 width: double.infinity,

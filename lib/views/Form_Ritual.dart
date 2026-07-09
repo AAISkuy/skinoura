@@ -33,6 +33,17 @@ class _RitualPageState extends State<RitualPage> {
     return selected.isBefore(today);
   }
 
+  bool get _isFutureDate {
+    final DateTime now = DateTime.now();
+    final DateTime today = DateTime(now.year, now.month, now.day);
+    final DateTime selected = DateTime(
+      _selectedDate.year,
+      _selectedDate.month,
+      _selectedDate.day,
+    );
+    return selected.isAfter(today);
+  }
+
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _subtitleController = TextEditingController();
 
@@ -776,6 +787,17 @@ class _RitualPageState extends State<RitualPage> {
                                   const SnackBar(
                                     content: Text(
                                       "Riwayat hari sebelumnya tidak dapat diubah.",
+                                    ),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                                return;
+                              }
+                              if (_isFutureDate) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Rutinitas hari yang akan datang belum dapat diisi.",
                                     ),
                                     backgroundColor: Colors.red,
                                   ),
