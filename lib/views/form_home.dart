@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:skinoura/views/form_quiz.dart';
-import 'package:skinoura/widgets/indicator_card.dart';
+import 'package:intl/intl.dart';
 import 'package:skinoura/database/database_helper.dart';
+import 'package:skinoura/database/firebase_db_helper.dart';
 import 'package:skinoura/database/preferences_handler.dart';
 import 'package:skinoura/models/ritual_model.dart';
-import 'package:intl/intl.dart';
-
-import 'package:skinoura/database/firebase_db_helper.dart';
+import 'package:skinoura/views/form_quiz.dart';
+import 'package:skinoura/widgets/indicator_card.dart';
 
 class Homepage extends StatefulWidget {
   final String userName;
@@ -45,14 +44,16 @@ class _HomepageState extends State<Homepage> {
 
         final allRituals = await DBHelper().getRitualsByEmail(email);
         final String dateKey = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        
+
         // Filter out soft-deleted rituals
         final filteredData = allRituals.where((ritual) {
           if (ritual.createdAt == null && ritual.deletedAt == null) return true;
           final bool isCreated =
-              ritual.createdAt == null || ritual.createdAt!.compareTo(dateKey) <= 0;
+              ritual.createdAt == null ||
+              ritual.createdAt!.compareTo(dateKey) <= 0;
           final bool isNotDeleted =
-              ritual.deletedAt == null || dateKey.compareTo(ritual.deletedAt!) < 0;
+              ritual.deletedAt == null ||
+              dateKey.compareTo(ritual.deletedAt!) < 0;
           return isCreated && isNotDeleted;
         }).toList();
 
@@ -64,7 +65,7 @@ class _HomepageState extends State<Homepage> {
 
         int total = filteredData.length;
         int done = filteredData.where((e) => e.isDone).length;
-        
+
         if (mounted) {
           setState(() {
             rituals = filteredData;
@@ -131,10 +132,10 @@ class _HomepageState extends State<Homepage> {
                       ),
                       Text(
                         rituals.isEmpty
-                            ? 'Mulai atur skincare protocol kamu hari ini.'
+                            ? 'Mulai siapkan jadwal skincare kamu hari ini.'
                             : completionRate == 1.0
-                                ? 'Hebat! Rutinitas skincare kamu hari ini selesai.'
-                                : 'Kulit kamu terlihat sehat hari ini.',
+                            ? 'Hebat! Rutinitas skincare kamu hari ini selesai.'
+                            : 'Kulit kamu terlihat sehat hari ini.',
                         style: const TextStyle(color: Colors.blueGrey),
                       ),
                     ],
@@ -195,7 +196,10 @@ class _HomepageState extends State<Homepage> {
                       const SizedBox(height: 12),
                       Text(
                         _getSkinConditionSummaryText(),
-                        style: const TextStyle(color: Colors.grey, fontSize: 14),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                        ),
                       ),
                       const SizedBox(height: 20),
                       _isLoading
@@ -203,7 +207,9 @@ class _HomepageState extends State<Homepage> {
                               child: Padding(
                                 padding: EdgeInsets.all(20.0),
                                 child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF436155)),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF436155),
+                                  ),
                                 ),
                               ),
                             )
@@ -217,7 +223,8 @@ class _HomepageState extends State<Homepage> {
                               children: [
                                 IndicatorCard(
                                   icon: Icons.opacity,
-                                  value: '${(40 + (completionRate * 60).round())}%',
+                                  value:
+                                      '${(40 + (completionRate * 60).round())}%',
                                   title: 'Hydration',
                                 ),
                                 IndicatorCard(
@@ -225,10 +232,10 @@ class _HomepageState extends State<Homepage> {
                                   value: completionRate >= 0.75
                                       ? 'Strong'
                                       : completionRate >= 0.5
-                                          ? 'Good'
-                                          : completionRate >= 0.25
-                                              ? 'Average'
-                                              : 'Weak',
+                                      ? 'Good'
+                                      : completionRate >= 0.25
+                                      ? 'Average'
+                                      : 'Weak',
                                   title: 'Barrier',
                                 ),
                                 IndicatorCard(
@@ -236,8 +243,8 @@ class _HomepageState extends State<Homepage> {
                                   value: completionRate >= 0.75
                                       ? 'Low'
                                       : completionRate >= 0.3
-                                          ? 'Moderate'
-                                          : 'High',
+                                      ? 'Moderate'
+                                      : 'High',
                                   title: 'Sensitivity',
                                 ),
                                 IndicatorCard(
@@ -245,8 +252,8 @@ class _HomepageState extends State<Homepage> {
                                   value: completionRate >= 0.75
                                       ? 'Balanced'
                                       : completionRate >= 0.3
-                                          ? 'Normal'
-                                          : 'Unbalanced',
+                                      ? 'Normal'
+                                      : 'Unbalanced',
                                   title: 'Sebum',
                                 ),
                               ],
@@ -255,8 +262,10 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ),
                 const SizedBox(height: 20),
+              ] else ...[
+                const SizedBox(height: 20),
               ],
-  
+
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -280,9 +289,9 @@ class _HomepageState extends State<Homepage> {
                       "Ayo cari tahu jenis kulit kamu",
                       style: TextStyle(color: Colors.white, fontSize: 14),
                     ),
-  
+
                     const SizedBox(height: 20),
-  
+
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -314,7 +323,7 @@ class _HomepageState extends State<Homepage> {
                   ],
                 ),
               ),
-  
+
               const SizedBox(height: 24),
             ],
           ),

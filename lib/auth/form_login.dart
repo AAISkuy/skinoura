@@ -20,6 +20,7 @@ class _FormloginState extends State<Formlogin> {
   final TextEditingController namacontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
   final TextEditingController passwordcontroller = TextEditingController();
+  bool _isLoading = false;
   void login() async {
     final email = emailcontroller.text.trim();
     final pass = passwordcontroller.text.trim();
@@ -30,6 +31,10 @@ class _FormloginState extends State<Formlogin> {
       ).showSnackBar(const SnackBar(content: Text('Harap mengisi semua form')));
       return;
     }
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final pengguna = await FirebaseAuthService().signInWithEmailAndPassword(
@@ -92,12 +97,18 @@ class _FormloginState extends State<Formlogin> {
 
         context.pushAndRemoveAll(AppBottomnav());
       } else {
+        setState(() {
+          _isLoading = false;
+        });
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Login gagal. Akun tidak ditemukan.")),
         );
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(e.message ?? "Login gagal. Email atau Password salah."),
@@ -105,6 +116,9 @@ class _FormloginState extends State<Formlogin> {
       );
     } catch (e) {
       if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
@@ -118,7 +132,9 @@ class _FormloginState extends State<Formlogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: Stack(
+        children: [
+          Container(
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
@@ -302,6 +318,45 @@ class _FormloginState extends State<Formlogin> {
             ),
           ),
         ),
+      ),
+      if (_isLoading)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: Center(
+                child: Container(
+                  padding: const EdgeInsets.all(30),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        "assets/images/kp2_dm.gif",
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(height: 20),
+                      const CircularProgressIndicator(
+                        valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF7C9A92)),
+                      ),
+                      const SizedBox(height: 15),
+                      const Text(
+                        "Signing In...",
+                        style: TextStyle(
+                          color: Color(0xFF7C9A92),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }

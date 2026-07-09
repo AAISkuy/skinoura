@@ -1,9 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:skinoura/auth/form_login.dart';
 import 'package:skinoura/extension/extension.dart';
 import 'package:skinoura/services/firebase_auth_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class LamanRegistrasi extends StatefulWidget {
   const LamanRegistrasi({super.key});
@@ -54,9 +54,7 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                     "3. Notifikasi & Alarm\n"
                     "Dengan mengaktifkan pengingat harian, aplikasi akan mengirimkan notifikasi harian untuk mengingatkan Anda melakukan perawatan kulit. Anda dapat menonaktifkan ini kapan saja melalui halaman pengaturan.\n\n"
                     "4. Pembatasan Tanggung Jawab\n"
-                    "CareSkin+ tidak bertanggung jawab atas reaksi alergi, iritasi, atau ketidakcocokan produk skincare yang Anda gunakan. Silakan lakukan patch test sebelum menggunakan produk baru.\n\n"
-                    "5. Hak Cipta\n"
-                    "Seluruh materi, logo, grafik, dan desain di dalam aplikasi ini adalah milik CareSkin+ dan dilindungi oleh undang-undang hak cipta.",
+                    "CareSkin+ tidak bertanggung jawab atas reaksi alergi, iritasi, atau ketidakcocokan produk skincare yang Anda gunakan. Silakan lakukan patch test sebelum menggunakan produk baru.\n\n",
                     style: TextStyle(fontSize: 12, height: 1.4),
                   ),
                 ],
@@ -68,7 +66,10 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
               onPressed: () => Navigator.pop(context),
               child: const Text(
                 "Tutup",
-                style: TextStyle(color: Color(0xFF7C9A92), fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: Color(0xFF7C9A92),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ],
@@ -76,10 +77,11 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       },
     );
   }
+
   bool _isRegistering = false;
 
   void register() async {
-    if (_isRegistering) return; // Mencegah klik ganda / eksekusi ganda
+    if (_isRegistering) return;
 
     final nama = namacontroller.text.trim();
     final email = emailcontroller.text.trim();
@@ -96,7 +98,6 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       _isRegistering = true;
     });
 
-    // Tampilkan Loading Spinner Dialog
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -118,7 +119,6 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
 
       if (!mounted) return;
 
-      // Tutup Loading Spinner Dialog
       Navigator.pop(context);
 
       setState(() {
@@ -132,12 +132,14 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
         context.push(const Formlogin());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Pendaftaran gagal. Silakan coba lagi.")),
+          const SnackBar(
+            content: Text("Pendaftaran gagal. Silakan coba lagi."),
+          ),
         );
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      Navigator.pop(context); // Tutup Loading Spinner Dialog
+      Navigator.pop(context);
       setState(() {
         _isRegistering = false;
       });
@@ -146,12 +148,16 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
       );
     } catch (e) {
       if (!mounted) return;
-      Navigator.pop(context); // Tutup Loading Spinner Dialog
+      Navigator.pop(context);
       setState(() {
         _isRegistering = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}")),
+        SnackBar(
+          content: Text(
+            "Terjadi kesalahan: ${e.toString().replaceAll('Exception: ', '')}",
+          ),
+        ),
       );
     }
   }
@@ -392,7 +398,10 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                         SizedBox(height: 10),
 
                         Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 15,
+                            vertical: 5,
+                          ),
                           child: Row(
                             children: [
                               Checkbox(
@@ -408,7 +417,10 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                 child: Text.rich(
                                   TextSpan(
                                     text: "Saya setuju ",
-                                    style: const TextStyle(fontSize: 12, color: Colors.black87),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black87,
+                                    ),
                                     children: [
                                       TextSpan(
                                         text: "Terms and Conditions",
@@ -457,7 +469,9 @@ class Laman_RegistrasiState extends State<LamanRegistrasi> {
                                         actions: [
                                           TextButton(
                                             onPressed: () {
-                                              Navigator.pop(context); // Tutup dialog Berhasil terlebih dahulu
+                                              Navigator.pop(
+                                                context,
+                                              ); // Tutup dialog Berhasil terlebih dahulu
                                               register(); // Jalankan proses registrasi
                                             },
                                             child: const Text("Lanjut"),
