@@ -365,7 +365,7 @@ class _RitualPageState extends State<RitualPage> {
   //  fungsi buat nambah  skincare
   void _showAddSkincareDialog() {
     if (_isPastDate) return;
-    String selectedType = "Facewash"; // Nilai default
+    String selectedType = "Facewash";
 
     showDialog(
       context: context,
